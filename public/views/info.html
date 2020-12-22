@@ -1,0 +1,378 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <title>Bingo</title>
+    <meta charset="utf-8"/>
+    <style type="text/css">
+
+    </style>
+    <script src="https://code.jquery.com/jquery-2.1.3.min.js"></script>
+
+
+
+<script type="text/javascript">
+
+let globalVal =-1;
+    let NUM_ROWS_CAGE = 5;
+    let NUM_COLUMNS_CAGE = 15;
+    let NUM_VALUES_PER_ROW = NUM_COLUMNS_CAGE;
+    
+    
+    let numBalls = NUM_VALUES_PER_ROW*NUM_ROWS_CAGE;
+    let cageReverse = [];
+    let winnerName = "";
+
+    for (let i=0;i<numBalls;i++) {
+        cageReverse[i] = 0;
+    }
+
+    let mostRecentBall = -1;
+
+polling();
+
+function polling() {
+console.log("polling");
+
+    $.get("/info2",{index:4,identifier:0},successInfo2);
+
+    let numMilliSeconds = 1000;   // 1000 milliseconds = 1 second
+    setTimeout(polling, numMilliSeconds);
+}
+function successInfo2(data) {
+console.log("successInfo2"); 
+    if (!data)
+        alert("ERROR");
+    else {
+        if (data.val == 4) {
+            console.log("winner name = " + data.winnerName);
+            winnerName = data.winnerName;
+        }
+    }
+}
+
+
+window.addEventListener('load', eventWindowLoaded, false);
+
+function eventWindowLoaded() {
+   canvasApp();
+}
+
+function Create2DArray(rows) {
+  var arr = [];
+
+  for (var i=0;i<rows;i++) {
+     arr[i] = [];
+  }
+
+  return arr;
+}
+
+
+function canvasApp(){
+
+    var theCanvas = document.getElementById("canvas");
+    theCanvas.addEventListener("mousemove",onMouseMove,false);
+    theCanvas.addEventListener("click",onMouseClick,false);
+
+    if (!theCanvas || !theCanvas.getContext) {
+        return;
+    }
+
+
+    var context = theCanvas.getContext("2d");
+
+    if (!context) {
+        return;
+    }
+
+   //canvasApp level variables
+    var keyPressList = [];
+    var windowWidth = 800;
+    var windowHeight = 250;
+    var mouseX = 0;
+    var mouseY = 0;
+
+
+    reset();
+
+    gameLoop();
+
+///////////////////////////////////////////////////////
+    function gameLoop()
+    {
+        var FRAME_RATE = 25;
+        var intervalTime = 1000/FRAME_RATE;
+
+        input();
+        paint();
+        animate();
+        window.setTimeout(gameLoop, intervalTime);
+    }
+
+    document.onkeydown = function(e){
+        e = e?e:window.event;
+        keyPressList[e.keyCode] = true;
+    }
+
+    document.onkeyup = function(e){
+        e = e?e:window.event;
+        keyPressList[e.keyCode] = false;
+    };
+
+///////////////////////////////////////////////////////
+    function onMouseMove(e)
+    {
+
+    }
+    function onMouseClick(e)
+    {
+
+    }
+    function input()
+    {
+// Tab:9 Enter:13 Space:32 0:48 A:65 a:97 Delete:127
+        if (keyPressList[27]==true){
+        //Escape
+            reset();
+        }
+
+        if (keyPressList[37]==true) {
+        //Left arrow
+        }
+
+        if (keyPressList[38]==true) {
+        //Up arrow
+        }
+
+        if (keyPressList[39]==true) {
+        //Right arrow
+        }
+        if (keyPressList[40]==true) {
+        //Down arrow
+        }
+    }
+
+    function paint()
+    {
+// draw background
+        context.fillStyle = '#ffffff';
+        context.fillRect(0, 0, getWidth2(), getHeight2());
+        context.strokeStyle = '#000000';
+        context.strokeRect(0, 0, getWidth2(), getHeight2());
+
+//horizontal lines
+        context.save(); //save current state in stack
+        context.setTransform(1,0,0,1,0,0);
+
+        let height = getHeight2()*8/10;
+        let width = getWidth2()*9/10;
+        
+        let ydelta = height/NUM_ROWS_CAGE;
+        let xdelta = width/NUM_COLUMNS_CAGE;
+
+        let xoffset = getWidth2()/10;
+        let yoffset = 0;
+        
+//Draw the grid.        
+
+        context.fillStyle = "rgb(0,0,0)";
+        for (let zi = 0;zi<NUM_ROWS_CAGE+1;zi++)
+        {
+            context.beginPath();
+            context.moveTo(getX(xoffset)+0,getY(yoffset)+zi*ydelta);
+            context.lineTo(getX(xoffset)+width,getY(yoffset)+zi*ydelta);
+            context.stroke();
+            context.closePath();             
+        }
+        
+        for (let zi = 0;zi<NUM_COLUMNS_CAGE+1;zi++)
+        {
+            context.beginPath();
+            context.moveTo(getX(xoffset)+zi*xdelta,getY(yoffset)+0);
+            context.lineTo(getX(xoffset)+zi*xdelta,getY(yoffset)+height);
+            context.stroke();
+            context.closePath();             
+        }
+        
+         
+        
+////////
+
+        let index = 0;
+        
+        for (let zrow=0;zrow<NUM_ROWS_CAGE;zrow++)
+        {
+            for (let zcol=0;zcol<NUM_COLUMNS_CAGE;zcol++)        
+            {
+                if (cageReverse[index] == 1) {
+                    
+                    if (mostRecentBall == index)
+                        context.fillStyle = "rgb(255,255,0)";
+                    else
+                        context.fillStyle = "rgb(155,155,155)";
+                    
+
+                    context.beginPath();
+                    context.fillRect(getX(xoffset)+zcol*xdelta, getY(yoffset)+zrow*ydelta, xdelta, ydelta);
+                    context.closePath(); 
+
+                }
+                index++;
+            }
+        }        
+  
+
+        
+        let count = 1;
+        let rowLoc = ydelta-3;
+        let bingoLetters = ["B","I","N","G","O"];
+        for (let row=0;row<NUM_ROWS_CAGE;row++) {
+          context.beginPath();
+          context.fillStyle = "rgb(0,0,0)";
+          context.strokeStyle = '#000000';
+          context.font = (ydelta-3) + 'px Arial';
+          context.textBaseline = 'bottom';
+          context.fillText  (bingoLetters[row],getX(xoffset)-xdelta ,getY(yoffset)+rowLoc);
+          context.closePath();            
+  
+            
+            let colLoc = 4;
+            for (let col=0;col<NUM_COLUMNS_CAGE;col++) {
+
+          context.beginPath();
+          context.fillStyle = "rgb(0,0,0)";
+          context.strokeStyle = '#000000';
+          context.font = (ydelta-3) + 'px Arial';
+          context.textBaseline = 'bottom';
+          context.fillText  ("" + count,getX(xoffset)+colLoc ,getY(yoffset)+rowLoc);
+          context.closePath();
+                count++;
+                colLoc += xdelta;
+            }
+            rowLoc += ydelta;
+        }
+        
+
+        if (winnerName != "") 
+        {
+            console.log(winnerName + " has won!!!!!!!");
+          context.beginPath();
+          context.fillStyle = "rgb(0,0,0)";
+          context.strokeStyle = '#000000';
+          context.font = (ydelta-3) + 'px Arial';
+          context.textBaseline = 'bottom';
+          context.fillText  (winnerName + " has won!",getX(xoffset) ,getY(yoffset)+ydelta*6);          
+          context.closePath();            
+        }
+
+
+        context.restore(); 
+    }
+
+    function reset()
+    {
+        winnerName = "";
+//    	console.log("reset");
+    	globalVal = -1;
+
+        for (let i=0;i<numBalls;i++) {
+            cageReverse[i] = 0;
+        }
+
+    }
+    function animate()
+    {
+
+    }
+////////////////////////////////////////////////////////
+    function getX(x)
+    {
+        return(x);
+    }
+    function getY(y)
+    {
+        return(y);
+    }
+    function getYNormal(y)
+    {
+        return(windowHeight-y);
+    }
+    function getWidth2()
+    {
+        return(windowWidth);
+    }
+    function getHeight2()
+    {
+        return(windowHeight);
+    }
+}
+
+</script>
+
+
+
+  </head>
+  
+  <body>  
+        <h1>GAME CALLER</h1>
+        <input type="button" value="Reset" onclick="msgReset()">
+        <input type="button" value="Number" onclick="msgNumber()">
+
+<canvas id="canvas" width="800" height="250"  style="position:absolute;top: 120px; left: 50px;">
+ Your browser does not support HTML5 Canvas.
+</canvas>
+
+
+
+
+
+<script type="text/javascript">
+
+function msgReset() {
+        $.get("/info2",{index:2},successInfo);
+}
+function msgNumber() {
+        $.get("/info2",{index:3},successInfo);
+}
+
+function successInfo(data) { 
+	if (!data)
+		alert("ERROR");
+	else {
+        if (data.val == 2) {
+            globalVal = -1;
+            winnerName = "";
+            for (let i=0;i<numBalls;i++) {
+                cageReverse[i] = 0;
+            }
+            
+        } else if (data.val == 3) {
+            globalVal = data.val;
+            if (data.ballNum != -1) {
+                cageReverse[data.ballNum-1] = 1;
+                mostRecentBall = data.ballNum-1;
+            }
+        } else if (data.val == 4) {
+            console.log("winner name = " + data.winnerName);
+        }
+
+
+
+	}
+}
+
+$(document).ready(function(){   
+  	$("#index").keydown( function( event ) {
+  	});
+});  		
+</script>
+
+  </body>
+</html>  
+  
+
+
+ 

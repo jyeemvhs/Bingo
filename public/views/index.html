@@ -1,0 +1,609 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <title>Bingo</title>
+    <meta charset="utf-8"/>
+    <style type="text/css">
+
+    </style>
+    <script src="https://code.jquery.com/jquery-2.1.3.min.js"></script>
+
+
+
+<script type="text/javascript">
+
+    let identifier = -1;
+
+    let NUM_ROWS_CAGE = 5;
+    let NUM_COLUMNS_CAGE = 15;
+    let NUM_VALUES_PER_ROW = NUM_COLUMNS_CAGE;
+    
+    
+    let numBalls = NUM_VALUES_PER_ROW*NUM_ROWS_CAGE;
+    let cageReverse = [];
+    let mostRecentBall = -1;
+
+    let NUM_ROWS_CARD = 5;
+    let NUM_COLUMNS_CARD = 5;
+ 
+    let board = null;
+    let boardSelect = null;
+    let winner = 0;
+
+    let xpixel;
+    let ypixel;
+ //   let resetDone;
+
+
+polling();
+
+function polling() {
+
+    if (identifier != -1) {
+        $.get("/player2",{index:3,identifier:identifier},successInfo);
+    }
+    let numMilliSeconds = 1000;   // 1000 milliseconds = 1 second
+    setTimeout(polling, numMilliSeconds);
+}
+
+
+function Create2DArray(rows) {
+  var arr = [];
+
+  for (var i=0;i<rows;i++) {
+     arr[i] = [];
+  }
+
+  return arr;
+}
+
+
+
+window.addEventListener('load', eventWindowLoaded, false);
+
+function eventWindowLoaded() {
+   canvasApp();
+}
+
+
+function canvasApp(){
+
+    var theCanvas = document.getElementById("canvas");
+    theCanvas.addEventListener("mousemove",onMouseMove,false);
+    theCanvas.addEventListener("click",onMouseClick,false);
+
+    if (!theCanvas || !theCanvas.getContext) {
+        return;
+    }
+
+
+    var context = theCanvas.getContext("2d");
+
+    if (!context) {
+        return;
+    }
+
+   //canvasApp level variables
+    var keyPressList = [];
+    var windowWidth = 800;
+    var windowHeight = 400;
+    var mouseX = 0;
+    var mouseY = 0;
+
+  //  resetDone = false;
+    reset();
+
+    gameLoop();
+
+///////////////////////////////////////////////////////
+    function gameLoop()
+    {
+        var FRAME_RATE = 25;
+        var intervalTime = 1000/FRAME_RATE;
+
+        input();
+        paint();
+        animate();
+        window.setTimeout(gameLoop, intervalTime);
+    }
+
+    document.onkeydown = function(e){
+        e = e?e:window.event;
+        keyPressList[e.keyCode] = true;
+    }
+
+    document.onkeyup = function(e){
+        e = e?e:window.event;
+        keyPressList[e.keyCode] = false;
+    };
+
+///////////////////////////////////////////////////////
+    function onMouseMove(e)
+    {
+
+    }
+    function onMouseClick(e)
+    {
+//These need to be modified when changes are made to location of canvas!!!!!!        
+        xpixel = e.clientX - 50;
+        ypixel = e.clientY - 120;
+        Select(xpixel,ypixel);
+    }
+    function input()
+    {
+// Tab:9 Enter:13 Space:32 0:48 A:65 a:97 Delete:127
+        if (keyPressList[27]==true){
+        //Escape
+
+        }
+
+        if (keyPressList[37]==true) {
+        //Left arrow
+        }
+
+        if (keyPressList[38]==true) {
+        //Up arrow
+        }
+
+        if (keyPressList[39]==true) {
+        //Right arrow
+        }
+        if (keyPressList[40]==true) {
+        //Down arrow
+        }
+    }
+
+    function paint()
+    {
+// draw background
+        context.fillStyle = '#ffffff';
+        context.fillRect(0, 0, getWidth2(), getHeight2());
+        context.strokeStyle = '#000000';
+        context.strokeRect(0, 0, getWidth2(), getHeight2());
+
+//horizontal lines
+        context.save(); //save current state in stack
+        context.setTransform(1,0,0,1,0,0);
+
+        let height = getHeight2()/3;
+        let width = getWidth2()*9/10;
+        
+        let ydelta = height/NUM_ROWS_CAGE;
+        let xdelta = width/NUM_COLUMNS_CAGE;
+
+        let xoffset = getWidth2()/10;
+        let yoffset = 0;
+        
+//Draw the grid.        
+
+        context.fillStyle = "rgb(0,0,0)";
+        for (let zi = 0;zi<NUM_ROWS_CAGE+1;zi++)
+        {
+            context.beginPath();
+            context.moveTo(getX(xoffset)+0,getY(yoffset)+zi*ydelta);
+            context.lineTo(getX(xoffset)+width,getY(yoffset)+zi*ydelta);
+            context.stroke();
+            context.closePath();             
+        }
+        
+        for (let zi = 0;zi<NUM_COLUMNS_CAGE+1;zi++)
+        {
+            context.beginPath();
+            context.moveTo(getX(xoffset)+zi*xdelta,getY(yoffset)+0);
+            context.lineTo(getX(xoffset)+zi*xdelta,getY(yoffset)+height);
+            context.stroke();
+            context.closePath();             
+        }
+        
+         
+        
+////////
+
+        let index = 0;
+        
+        for (let zrow=0;zrow<NUM_ROWS_CAGE;zrow++)
+        {
+            for (let zcol=0;zcol<NUM_COLUMNS_CAGE;zcol++)        
+            {
+                if (cageReverse[index] == 1) {
+                    
+                    if (mostRecentBall == index+1)
+                        context.fillStyle = "rgb(255,255,0)";
+                    else
+                        context.fillStyle = "rgb(155,155,155)";
+                    
+
+                    context.beginPath();
+                    context.fillRect(getX(xoffset)+zcol*xdelta, getY(yoffset)+zrow*ydelta, xdelta, ydelta);
+                    context.closePath(); 
+
+                }
+                index++;
+            }
+        }        
+  
+
+        
+//        g.setFont(new Font("Arial",Font.PLAIN,ydelta-3));
+        let count = 1;
+        let rowLoc = ydelta-3;
+        let bingoLetters = ["B","I","N","G","O"];
+        for (let row=0;row<NUM_ROWS_CAGE;row++) {
+ 
+          context.beginPath();
+          context.fillStyle = "rgb(0,0,0)";
+          context.strokeStyle = '#000000';
+          context.font = (ydelta-3) + 'px Arial';
+          context.textBaseline = 'bottom';
+          context.fillText  (bingoLetters[row],getX(xoffset)-xdelta ,getY(yoffset)+rowLoc);
+          context.closePath();            
+
+            let colLoc = 4;
+            for (let col=0;col<NUM_COLUMNS_CAGE;col++) {
+
+          context.beginPath();
+          context.fillStyle = "rgb(0,0,0)";
+          context.strokeStyle = '#000000';
+          context.font = (ydelta-3) + 'px Arial';
+          context.textBaseline = 'bottom';
+          context.fillText  ("" + count,getX(xoffset)+colLoc ,getY(yoffset)+rowLoc);
+          context.closePath();
+                count++;
+                colLoc += xdelta;
+            }
+            rowLoc += ydelta;
+        }
+        
+
+/////////////////        
+//Draw Card        
+        height = getHeight2()/2;
+        width = getWidth2()/2;
+        
+        ydelta = height/NUM_ROWS_CARD;
+        xdelta = width/NUM_COLUMNS_CARD;
+
+        xoffset = 0;
+        yoffset = getHeight2()/2;
+//Draw the grid.        
+
+        context.fillStyle = "rgb(0,0,0)"; 
+        context.strokeStyle = '#000000';
+             
+        for (let zi = 0;zi<NUM_ROWS_CARD+1;zi++)
+        {
+            context.beginPath();
+            context.moveTo(getX(xoffset)+0,getY(yoffset)+zi*ydelta);
+            context.lineTo(getX(xoffset)+width,getY(yoffset)+zi*ydelta);
+            context.stroke();
+            context.closePath();             
+        }
+        
+        for (let zi = 0;zi<NUM_COLUMNS_CARD+1;zi++)
+        {
+            context.beginPath();
+            context.moveTo(getX(xoffset)+zi*xdelta,getY(yoffset)+0);
+            context.lineTo(getX(xoffset)+zi*xdelta,getY(yoffset)+height);
+            context.stroke();
+            context.closePath();             
+        }
+        
+         
+        
+////////
+         
+        
+
+        
+                
+        for (let zrow=0;zrow<NUM_ROWS_CARD;zrow++)
+        {
+            for (let zcol=0;zcol<NUM_COLUMNS_CARD;zcol++)        
+            {
+                if (boardSelect != null) {
+                    if (boardSelect[zrow][zcol]) {
+
+                        context.fillStyle = "rgb(255,192,203)";
+                        context.beginPath();
+                        context.fillRect(getX(xoffset)+zcol*xdelta, getY(yoffset)+zrow*ydelta, xdelta, ydelta);
+                        context.closePath(); 
+                    }
+                }
+            }
+        }        
+          
+        count = 1;
+        rowLoc = ydelta-3;
+        for (let col=0;col<NUM_COLUMNS_CARD;col++) {
+            let colLoc = 4;
+            for (let row=0;row<NUM_ROWS_CARD;row++) {
+
+                if (row == Math.floor(NUM_ROWS_CARD/2) && col == Math.floor(NUM_COLUMNS_CARD/2)) {
+                    context.fillStyle = "rgb(255,192,203)";
+                    context.beginPath();
+                    context.fillRect(getX(xoffset)+col*xdelta, getY(yoffset)+row*ydelta, xdelta, ydelta);
+                    context.closePath(); 
+                }
+                else 
+                {
+                    if (board != null) {
+                        context.beginPath();
+                        context.fillStyle = "rgb(0,0,0)";
+                        context.strokeStyle = '#000000';
+                        context.font = (ydelta-3) + 'px Arial';
+                        context.textBaseline = 'bottom';
+          
+                        context.fillText  ("" + board[col][row],getX(xoffset)+colLoc ,getY(yoffset)+rowLoc);
+                        context.closePath();
+                    }
+                }
+                count++;
+                colLoc += xdelta;
+            }
+            rowLoc += ydelta;
+        }        
+        
+
+        let colLoc = 4;
+        for (let col=0;col<NUM_COLUMNS_CARD;col++) {
+          context.beginPath();
+          context.fillStyle = "rgb(0,0,0)";
+          context.strokeStyle = '#000000';
+          context.font = (ydelta-3) + 'px Arial';
+          context.textBaseline = 'bottom';
+          
+        context.fillText  (bingoLetters[col],getX(xoffset)+colLoc ,getY(yoffset));
+          context.closePath();                        
+            colLoc += xdelta;
+        }        
+        
+        if (winner == 1) {               
+          context.beginPath();
+          context.fillStyle = "rgb(0,0,0)";
+          context.strokeStyle = '#000000';
+          context.font = (ydelta-3) + 'px Arial';
+          context.textBaseline = 'bottom';
+          
+        context.fillText  ("WINNER",getX(xoffset)+xdelta*6 ,getY(yoffset));
+          context.closePath();             
+        } else if (winner == -1) {
+          context.beginPath();
+          context.fillStyle = "rgb(0,0,0)";
+          context.strokeStyle = '#000000';
+          context.font = (ydelta-3) + 'px Arial';
+          context.textBaseline = 'bottom';
+          
+        context.fillText  ("NOT WINNER",getX(xoffset)+xdelta*6 ,getY(yoffset));
+          context.closePath();                 
+            
+        }  else if (winner == -2) {
+          context.beginPath();
+          context.fillStyle = "rgb(0,0,0)";
+          context.strokeStyle = '#000000';
+          context.font = (ydelta-3) + 'px Arial';
+          context.textBaseline = 'bottom';
+          
+        context.fillText  ("ONLY 1 TRY",getX(xoffset)+xdelta*6 ,getY(yoffset));
+          context.closePath();                 
+            
+        }  else if (winner == 2) {
+          context.beginPath();
+          context.fillStyle = "rgb(0,0,0)";
+          context.strokeStyle = '#000000';
+          context.font = (ydelta-3) + 'px Arial';
+          context.textBaseline = 'bottom';
+          
+        context.fillText  ("2ND WINNER",getX(xoffset)+xdelta*6 ,getY(yoffset));
+          context.closePath();                 
+            
+        }
+       
+/////////////
+        context.restore(); 
+    }
+
+    function reset()
+    {
+   //     if (resetDone)
+     //       return;
+//    	console.log("reset");
+
+  //      resetDone = true;
+
+        winner = 0;
+//clear the cage numbers
+        for (let i=0;i<numBalls;i++) {
+            cageReverse[i] = 0;
+        }
+//clear the card
+            for (let row = 0;row < NUM_ROWS_CARD;row++) {
+                for (let col = 0;col < NUM_COLUMNS_CARD;col++) {
+                    if (boardSelect != null)
+                        boardSelect[row][col] = false;
+                   
+                }
+
+            }
+    }
+    function animate()
+    {
+
+    }
+
+    function Select(_xpixel,_ypixel) {
+        let xoffset = 0;
+        let yoffset = Math.floor(getHeight2()/2);        
+        _ypixel -= yoffset;
+        _xpixel -= xoffset;
+//        console.log(_xpixel + " " + _ypixel);
+        let height = Math.floor(getHeight2()/2);
+        let width = Math.floor(getWidth2()/2);
+        
+        if (_xpixel < 0 || _xpixel > width)
+            return;
+        if (_ypixel < 0 || _ypixel > height)
+            return;   
+                
+        let ydelta = Math.floor(height/NUM_ROWS_CARD);
+        let xdelta = Math.floor(width/NUM_COLUMNS_CARD);
+
+//Find the column to add the piece to.        
+        let column = Math.floor(_xpixel/xdelta);   
+        let row = Math.floor(_ypixel/ydelta);   
+//    console.log("****" + row + " " + column);
+        if (row != Math.floor(NUM_ROWS_CARD/2) || column != Math.floor(NUM_COLUMNS_CARD/2))
+        {
+            if (boardSelect != null)
+                boardSelect[row][column] = !boardSelect[row][column];
+        }
+    }
+
+
+
+////////////////////////////////////////////////////////
+    function getX(x)
+    {
+        return(x);
+    }
+    function getY(y)
+    {
+        return(y);
+    }
+    function getYNormal(y)
+    {
+        return(windowHeight-y);
+    }
+    function getWidth2()
+    {
+        return(windowWidth);
+    }
+    function getHeight2()
+    {
+        return(windowHeight);
+    }
+}
+
+</script>
+
+
+
+  </head>
+  
+  <body> 
+        <h1>GAME PLAYER</h1>
+        <label for="username">Name:</label>
+        <input id="username" type="text" name="username" value="">        
+        <input type="button" value="Bingo" onclick="msgBingo()">
+
+<canvas id="canvas" width="800" height="400"  style="position:absolute;top: 120px; left: 50px;">
+ Your browser does not support HTML5 Canvas.
+</canvas>
+
+
+
+<script type="text/javascript">
+function msgBingo() {
+
+    if (winner < 0) {
+        winner = -2;
+        return;
+    }
+
+    $.get("/player2",{index:2,identifier:identifier,board:board,name:$("#username").val()},successInfo);
+}
+function successInfo(data) { 
+	if (!data)
+		alert("ERROR");
+	else {
+        if (data.val == 1) {
+//get the created card numbers.  Should only be once.            
+    //        console.log(data.identifier);
+            identifier = data.identifier;
+
+            board = Create2DArray(NUM_ROWS_CARD*NUM_COLUMNS_CARD);
+            boardSelect = Create2DArray(NUM_ROWS_CARD*NUM_COLUMNS_CARD);
+
+            for (let row = 0;row < NUM_ROWS_CARD;row++) {
+                for (let col = 0;col < NUM_COLUMNS_CARD;col++) {
+                    board[row][col] = data.board[row][col];
+                    boardSelect[row][col] = false;
+        //            console.log(board[row][col] );
+                }
+
+            }
+
+//            for (let i=0;i<numBalls;i++) {
+  //              cageReverse[i] = 0;
+    //        }
+            
+        }
+        else if (data.val == 2) {
+//get winner value.            
+ //           console.log(data.winner);
+
+                winner = data.winner;
+
+        }
+        else if (data.val == 3) {
+            console.log("do a client mostRecentBall");
+//polling to get the mostRecentBall chosen.            
+            if (data.ballNum != undefined && data.ballNum != -1) {
+                mostRecentBall = data.ballNum;
+                cageReverse[data.ballNum-1] = 1;
+  //              console.log("mostRecentBall " + mostRecentBall);    
+            }
+        }        
+        else if (data.val == 4) {
+//polling to reset.      
+            console.log("do a client reset");      
+       //     reset();
+       winner = 0;
+//clear the cage numbers
+        for (let i=0;i<numBalls;i++) {
+            cageReverse[i] = 0;
+        }
+//clear the card
+            for (let row = 0;row < NUM_ROWS_CARD;row++) {
+                for (let col = 0;col < NUM_COLUMNS_CARD;col++) {
+                    if (boardSelect != null)
+                        boardSelect[row][col] = false;
+                   
+                }
+
+            }
+
+        }  
+	}
+}
+
+$(document).ready(function(){   
+
+    $.get("/player2",{index:1,identifier:identifier},successInfo);
+
+  	$("#index").keydown( function( event ) {
+  		if ( event.which === 13 ) {
+  			// Do something
+            if ($("#index").val() == 1)
+       //         resetDone = false;
+    	       $.get("/player2",{index:$("#index").val(),identifier:identifier},successInfo);
+           else if ($("#index").val() == 2)
+                $.get("/player2",{index:$("#index").val(),identifier:identifier,board:board},successInfo);
+  			// Disable sending the related form
+  			event.preventDefault();
+  			return false;
+  		}
+  	});
+
+
+});  		
+</script>
+
+  </body>
+</html>  
+  
+
+
+ 
