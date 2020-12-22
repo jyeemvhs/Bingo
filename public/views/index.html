@@ -168,13 +168,13 @@ function canvasApp(){
         context.save(); //save current state in stack
         context.setTransform(1,0,0,1,0,0);
 
-        let height = getHeight2()/3;
-        let width = getWidth2()*14/15;
-        let xoffset = getWidth2()/15;
+        let height = Math.floor(getHeight2()/3);
+        let width = Math.floor(getWidth2()*14/15);
+        let xoffset = Math.floor(getWidth2()/15);
         let yoffset = 0;
         
-        let ydelta = height/NUM_ROWS_CAGE;
-        let xdelta = width/NUM_COLUMNS_CAGE;
+        let ydelta = Math.floor(height/NUM_ROWS_CAGE);
+        let xdelta = Math.floor(width/NUM_COLUMNS_CAGE);
 
         
 //Draw the grid.        
@@ -226,8 +226,6 @@ function canvasApp(){
         }        
   
 
-        
-//        g.setFont(new Font("Arial",Font.PLAIN,ydelta-3));
         let count = 1;
         let rowLoc = ydelta-3;
         let bingoLetters = ["B","I","N","G","O"];
@@ -260,37 +258,19 @@ function canvasApp(){
 
 /////////////////        
 //Draw Card        
-        height = getHeight2()/2;
-        width = getWidth2()/2;
+        height = Math.floor(getHeight2()/2);
+        width = Math.floor(getWidth2()/2);
         
-        ydelta = height/NUM_ROWS_CARD;
-        xdelta = width/NUM_COLUMNS_CARD;
+        ydelta = Math.floor(height/NUM_ROWS_CARD);
+        xdelta = Math.floor(width/NUM_COLUMNS_CARD);
 
         xoffset = 0;
-        yoffset = getHeight2()/2;
+        yoffset = Math.floor(getHeight2()/2);
 //Draw the grid.        
 
         context.fillStyle = "rgb(0,0,0)"; 
         context.strokeStyle = '#000000';
-/*             
-        for (let zi = 0;zi<NUM_ROWS_CARD+1;zi++)
-        {
-            context.beginPath();
-            context.moveTo(getX(xoffset)+0,getY(yoffset)+zi*ydelta);
-            context.lineTo(getX(xoffset)+width,getY(yoffset)+zi*ydelta);
-            context.stroke();
-            context.closePath();             
-        }
-        
-        for (let zi = 0;zi<NUM_COLUMNS_CARD+1;zi++)
-        {
-            context.beginPath();
-            context.moveTo(getX(xoffset)+zi*xdelta,getY(yoffset)+0);
-            context.lineTo(getX(xoffset)+zi*xdelta,getY(yoffset)+height);
-            context.stroke();
-            context.closePath();             
-        }
-  */      
+
          
         
 ////////

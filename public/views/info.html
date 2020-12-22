@@ -169,13 +169,13 @@ function canvasApp(){
         context.save(); //save current state in stack
         context.setTransform(1,0,0,1,0,0);
 
-        let height = getHeight2()*8/10;
-        let width = getWidth2()*14/15;
-        let xoffset = getWidth2()/15;
+        let height = Math.floor(getHeight2()*8/10);
+        let width = Math.floor(getWidth2()*14/15);
+        let xoffset = Math.floor(getWidth2()/15);
         let yoffset = 0;
         
-        let ydelta = height/NUM_ROWS_CAGE;
-        let xdelta = width/NUM_COLUMNS_CAGE;
+        let ydelta = Math.floor(height/NUM_ROWS_CAGE);
+        let xdelta = Math.floor(width/NUM_COLUMNS_CAGE);
 
         
 //Draw the grid.        

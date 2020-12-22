@@ -73,6 +73,8 @@ function reset() {
             if (order == numBalls+1)
                 keepLooping = false;
         }
+
+
 }
 
 
@@ -179,6 +181,8 @@ function CreateCard(_ident) {
            }
         }        
 
+
+
 }
 
   function GetCurrentBall() {
@@ -190,7 +194,7 @@ function CreateCard(_ident) {
 //Check to see if the card is a winner.
 //Check the card to see the value exists on the card.
     function checkValue(value,row,col) {
-        if (row == NUM_ROWS_CARD/2 && col == NUM_COLUMNS_CARD/2)
+        if (row == Math.floor(NUM_ROWS_CARD/2) && col == Math.floor(NUM_COLUMNS_CARD/2))
           return (1);
 
         for (let i=0;i<currentIndex;i++) {
@@ -208,6 +212,7 @@ function CreateCard(_ident) {
             for (let i=0;i<NUM_COLUMNS_CARD;i++) {
                 total += checkValue(tempBoard[row][i],row,i);
             }    
+            console.log(total);
             if (total == NUM_ROWS_CARD)
                 return (true);
         }
@@ -216,9 +221,12 @@ function CreateCard(_ident) {
             for (let i=0;i<NUM_ROWS_CARD;i++) {
                 total += checkValue(tempBoard[i][col],i,col);
             }    
+            console.log(total);
             if (total == NUM_ROWS_CARD)
                 return (true);
         }
+
+
         total = 0;
         for (let i=0;i<NUM_ROWS_CARD;i++) {
             total += checkValue(tempBoard[i][i],i,i);
