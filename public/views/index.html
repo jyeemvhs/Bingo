@@ -37,11 +37,12 @@
     let ypixel;
  //   let resetDone;
 
+    let winnerName = "";
+    let totalMessage = "";
 
 polling();
 
 function polling() {
-
     if (identifier != -1) {
         $.get("/player2",{index:3,identifier:identifier},successInfo);
     }
@@ -88,12 +89,11 @@ function canvasApp(){
 
    //canvasApp level variables
     var keyPressList = [];
-    var windowWidth = 800;
+    var windowWidth = 700;
     var windowHeight = 400;
     var mouseX = 0;
     var mouseY = 0;
 
-  //  resetDone = false;
     reset();
 
     gameLoop();
@@ -128,8 +128,8 @@ function canvasApp(){
     function onMouseClick(e)
     {
 //These need to be modified when changes are made to location of canvas!!!!!!        
-        xpixel = e.clientX - 50;
-        ypixel = e.clientY - 120;
+        xpixel = e.clientX - 8;
+        ypixel = e.clientY - 180;
         Select(xpixel,ypixel);
     }
     function input()
@@ -169,13 +169,13 @@ function canvasApp(){
         context.setTransform(1,0,0,1,0,0);
 
         let height = getHeight2()/3;
-        let width = getWidth2()*9/10;
+        let width = getWidth2()*14/15;
+        let xoffset = getWidth2()/15;
+        let yoffset = 0;
         
         let ydelta = height/NUM_ROWS_CAGE;
         let xdelta = width/NUM_COLUMNS_CAGE;
 
-        let xoffset = getWidth2()/10;
-        let yoffset = 0;
         
 //Draw the grid.        
 
@@ -272,7 +272,7 @@ function canvasApp(){
 
         context.fillStyle = "rgb(0,0,0)"; 
         context.strokeStyle = '#000000';
-             
+/*             
         for (let zi = 0;zi<NUM_ROWS_CARD+1;zi++)
         {
             context.beginPath();
@@ -290,7 +290,7 @@ function canvasApp(){
             context.stroke();
             context.closePath();             
         }
-        
+  */      
          
         
 ////////
@@ -346,6 +346,28 @@ function canvasApp(){
             rowLoc += ydelta;
         }        
         
+        context.fillStyle = "rgb(0,0,0)"; 
+        context.strokeStyle = '#000000';
+             
+        for (let zi = 0;zi<NUM_ROWS_CARD+1;zi++)
+        {
+            context.beginPath();
+            context.moveTo(getX(xoffset)+0,getY(yoffset)+zi*ydelta);
+            context.lineTo(getX(xoffset)+width,getY(yoffset)+zi*ydelta);
+            context.stroke();
+            context.closePath();             
+        }
+        
+        for (let zi = 0;zi<NUM_COLUMNS_CARD+1;zi++)
+        {
+            context.beginPath();
+            context.moveTo(getX(xoffset)+zi*xdelta,getY(yoffset)+0);
+            context.lineTo(getX(xoffset)+zi*xdelta,getY(yoffset)+height);
+            context.stroke();
+            context.closePath();             
+        }
+
+
 
         let colLoc = 4;
         for (let col=0;col<NUM_COLUMNS_CARD;col++) {
@@ -367,7 +389,7 @@ function canvasApp(){
           context.font = (ydelta-3) + 'px Arial';
           context.textBaseline = 'bottom';
           
-        context.fillText  ("WINNER",getX(xoffset)+xdelta*6 ,getY(yoffset));
+        context.fillText  ("1ST BINGO",getX(xoffset)+xdelta*5+8 ,getY(yoffset)+ydelta);
           context.closePath();             
         } else if (winner == -1) {
           context.beginPath();
@@ -376,7 +398,7 @@ function canvasApp(){
           context.font = (ydelta-3) + 'px Arial';
           context.textBaseline = 'bottom';
           
-        context.fillText  ("NOT WINNER",getX(xoffset)+xdelta*6 ,getY(yoffset));
+        context.fillText  ("NO BINGO",getX(xoffset)+xdelta*5+8 ,getY(yoffset)+ydelta);
           context.closePath();                 
             
         }  else if (winner == -2) {
@@ -386,7 +408,7 @@ function canvasApp(){
           context.font = (ydelta-3) + 'px Arial';
           context.textBaseline = 'bottom';
           
-        context.fillText  ("ONLY 1 TRY",getX(xoffset)+xdelta*6 ,getY(yoffset));
+        context.fillText  ("ONLY 1 TRY",getX(xoffset)+xdelta*5+8 ,getY(yoffset)+ydelta);
           context.closePath();                 
             
         }  else if (winner == 2) {
@@ -396,23 +418,29 @@ function canvasApp(){
           context.font = (ydelta-3) + 'px Arial';
           context.textBaseline = 'bottom';
           
-        context.fillText  ("2ND WINNER",getX(xoffset)+xdelta*6 ,getY(yoffset));
+        context.fillText  ("2ND BINGO",getX(xoffset)+xdelta*5+8 ,getY(yoffset)+ydelta);
           context.closePath();                 
             
         }
-       
+       if (winnerName != "") {
+          context.beginPath();
+          context.fillStyle = "rgb(0,0,0)";
+          context.strokeStyle = '#000000';
+          context.font = (ydelta-3) + 'px Arial';
+          context.textBaseline = 'bottom';
+          
+        context.fillText  (winnerName + " has won!",getX(xoffset)+xdelta*5+8 ,getY(yoffset)+ydelta*3);
+          context.closePath();                 
+                    
+       }       
+
 /////////////
         context.restore(); 
     }
 
     function reset()
     {
-   //     if (resetDone)
-     //       return;
-//    	console.log("reset");
-
-  //      resetDone = true;
-
+        winnerName = "";
         winner = 0;
 //clear the cage numbers
         for (let i=0;i<numBalls;i++) {
@@ -438,7 +466,7 @@ function canvasApp(){
         let yoffset = Math.floor(getHeight2()/2);        
         _ypixel -= yoffset;
         _xpixel -= xoffset;
-//        console.log(_xpixel + " " + _ypixel);
+
         let height = Math.floor(getHeight2()/2);
         let width = Math.floor(getWidth2()/2);
         
@@ -453,7 +481,7 @@ function canvasApp(){
 //Find the column to add the piece to.        
         let column = Math.floor(_xpixel/xdelta);   
         let row = Math.floor(_ypixel/ydelta);   
-//    console.log("****" + row + " " + column);
+
         if (row != Math.floor(NUM_ROWS_CARD/2) || column != Math.floor(NUM_COLUMNS_CARD/2))
         {
             if (boardSelect != null)
@@ -493,12 +521,20 @@ function canvasApp(){
   </head>
   
   <body> 
-        <h1>GAME PLAYER</h1>
+        
         <label for="username">Name:</label>
-        <input id="username" type="text" name="username" value="">        
+        <input id="username" type="text" name="username" value="">
         <input type="button" value="Bingo" onclick="msgBingo()">
+        <br>
+        <br>
+        <label for="message">Message:</label>
+        <input id="message" type="text" name="message" value="" size="30" maxlength="50">        
+        <br>
+        <textarea id="comments" name="comments" rows="6" cols="80"></textarea>
 
-<canvas id="canvas" width="800" height="400"  style="position:absolute;top: 120px; left: 50px;">
+
+
+<canvas id="canvas" width="700" height="400"  style="position:absolute;top: 180px; left: 8px;">
  Your browser does not support HTML5 Canvas.
 </canvas>
 
@@ -511,16 +547,16 @@ function msgBingo() {
         winner = -2;
         return;
     }
-
-    $.get("/player2",{index:2,identifier:identifier,board:board,name:$("#username").val()},successInfo);
+   $.get("/player2",{index:2,identifier:identifier,board:board,name:$("#username").val()},successInfo);
 }
+
+
 function successInfo(data) { 
-	if (!data)
-		alert("ERROR");
-	else {
+    if (!data)
+        alert("ERROR");
+    else {
         if (data.val == 1) {
 //get the created card numbers.  Should only be once.            
-    //        console.log(data.identifier);
             identifier = data.identifier;
 
             board = Create2DArray(NUM_ROWS_CARD*NUM_COLUMNS_CARD);
@@ -530,7 +566,6 @@ function successInfo(data) {
                 for (let col = 0;col < NUM_COLUMNS_CARD;col++) {
                     board[row][col] = data.board[row][col];
                     boardSelect[row][col] = false;
-        //            console.log(board[row][col] );
                 }
 
             }
@@ -542,25 +577,35 @@ function successInfo(data) {
         }
         else if (data.val == 2) {
 //get winner value.            
- //           console.log(data.winner);
-
                 winner = data.winner;
-
         }
         else if (data.val == 3) {
-            console.log("do a client mostRecentBall");
+//polling to get the winner name.
+            if (data.winnerName != "") {
+                winnerName = data.winnerName;
+            }            
 //polling to get the mostRecentBall chosen.            
             if (data.ballNum != undefined && data.ballNum != -1) {
                 mostRecentBall = data.ballNum;
                 cageReverse[data.ballNum-1] = 1;
-  //              console.log("mostRecentBall " + mostRecentBall);    
             }
+//polling to get the total message.
+            
+         $("#comments").val("");
+         $("#comments").val(data.message);
+
+
+
+
         }        
         else if (data.val == 4) {
-//polling to reset.      
-            console.log("do a client reset");      
+//polling to reset.     
+         $("#comments").val("");
+         $("#comments").val(data.message);
+
        //     reset();
        winner = 0;
+       winnerName = "";
 //clear the cage numbers
         for (let i=0;i<numBalls;i++) {
             cageReverse[i] = 0;
@@ -576,29 +621,32 @@ function successInfo(data) {
             }
 
         }  
-	}
+        else if (data.val == 5) {
+        }
+    }
 }
 
 $(document).ready(function(){   
 
     $.get("/player2",{index:1,identifier:identifier},successInfo);
 
-  	$("#index").keydown( function( event ) {
-  		if ( event.which === 13 ) {
-  			// Do something
-            if ($("#index").val() == 1)
-       //         resetDone = false;
-    	       $.get("/player2",{index:$("#index").val(),identifier:identifier},successInfo);
-           else if ($("#index").val() == 2)
-                $.get("/player2",{index:$("#index").val(),identifier:identifier,board:board},successInfo);
-  			// Disable sending the related form
-  			event.preventDefault();
-  			return false;
-  		}
-  	});
+    $("#message").keydown( function( event ) {
+        if ( event.which === 13 ) {
+
+            if ($("#message").val() != "") {
+                let messSent = $("#username").val() + ": " + $("#message").val();
+                $("#message").val("");
+                $.get("/player2",{index:5,message:messSent},successInfo);
+            }
+
+            // Disable sending the related form
+            event.preventDefault();
+            return false;
+        }
+    });
 
 
-});  		
+});         
 </script>
 
   </body>

@@ -24,6 +24,7 @@ let globalVal =-1;
     let numBalls = NUM_VALUES_PER_ROW*NUM_ROWS_CAGE;
     let cageReverse = [];
     let winnerName = "";
+    let totalMessage = "";
 
     for (let i=0;i<numBalls;i++) {
         cageReverse[i] = 0;
@@ -34,21 +35,22 @@ let globalVal =-1;
 polling();
 
 function polling() {
-console.log("polling");
-
     $.get("/info2",{index:4,identifier:0},successInfo2);
 
     let numMilliSeconds = 1000;   // 1000 milliseconds = 1 second
     setTimeout(polling, numMilliSeconds);
 }
 function successInfo2(data) {
-console.log("successInfo2"); 
     if (!data)
         alert("ERROR");
     else {
         if (data.val == 4) {
-            console.log("winner name = " + data.winnerName);
             winnerName = data.winnerName;
+
+             $("#comments").val("");
+             $("#comments").val(data.message);
+
+
         }
     }
 }
@@ -91,7 +93,7 @@ function canvasApp(){
    //canvasApp level variables
     var keyPressList = [];
     var windowWidth = 800;
-    var windowHeight = 250;
+    var windowHeight = 200;
     var mouseX = 0;
     var mouseY = 0;
 
@@ -168,13 +170,13 @@ function canvasApp(){
         context.setTransform(1,0,0,1,0,0);
 
         let height = getHeight2()*8/10;
-        let width = getWidth2()*9/10;
+        let width = getWidth2()*14/15;
+        let xoffset = getWidth2()/15;
+        let yoffset = 0;
         
         let ydelta = height/NUM_ROWS_CAGE;
         let xdelta = width/NUM_COLUMNS_CAGE;
 
-        let xoffset = getWidth2()/10;
-        let yoffset = 0;
         
 //Draw the grid.        
 
@@ -258,7 +260,6 @@ function canvasApp(){
 
         if (winnerName != "") 
         {
-            console.log(winnerName + " has won!!!!!!!");
           context.beginPath();
           context.fillStyle = "rgb(0,0,0)";
           context.strokeStyle = '#000000';
@@ -275,8 +276,7 @@ function canvasApp(){
     function reset()
     {
         winnerName = "";
-//    	console.log("reset");
-    	globalVal = -1;
+        globalVal = -1;
 
         for (let i=0;i<numBalls;i++) {
             cageReverse[i] = 0;
@@ -318,10 +318,17 @@ function canvasApp(){
   
   <body>  
         <h1>GAME CALLER</h1>
+
+        <label for="message">Message:</label>
+        <input id="message" type="text" name="message" value="" size="30" maxlength="50">        
+        <br>
+        <textarea id="comments" name="comments" rows="6" cols="80"></textarea>
+        <br>        
+        <br>        
         <input type="button" value="Reset" onclick="msgReset()">
         <input type="button" value="Number" onclick="msgNumber()">
 
-<canvas id="canvas" width="800" height="250"  style="position:absolute;top: 120px; left: 50px;">
+<canvas id="canvas" width="800" height="200"  style="position:absolute;top: 250px; left: 8px;">
  Your browser does not support HTML5 Canvas.
 </canvas>
 
@@ -339,9 +346,9 @@ function msgNumber() {
 }
 
 function successInfo(data) { 
-	if (!data)
-		alert("ERROR");
-	else {
+    if (!data)
+        alert("ERROR");
+    else {
         if (data.val == 2) {
             globalVal = -1;
             winnerName = "";
@@ -356,18 +363,37 @@ function successInfo(data) {
                 mostRecentBall = data.ballNum-1;
             }
         } else if (data.val == 4) {
-            console.log("winner name = " + data.winnerName);
+//            console.log("winner name = " + data.winnerName);
+
+         $("#comments").val("");
+         $("#comments").val(data.message);
+
+        } else if (data.val == 5) {
+
         }
 
 
-
-	}
+    }
 }
 
+
 $(document).ready(function(){   
-  	$("#index").keydown( function( event ) {
-  	});
-});  		
+    $("#message").keydown( function( event ) {
+        if ( event.which === 13 ) {
+            if ($("#message").val() != "") {
+                let messSent = "Bingo Caller: " + $("#message").val();
+                $("#message").val("");
+                $.get("/player2",{index:5,message:messSent},successInfo);
+            }
+            // Disable sending the related form
+            event.preventDefault();
+            return false;
+        }
+    });
+});  
+    
+
+
 </script>
 
   </body>

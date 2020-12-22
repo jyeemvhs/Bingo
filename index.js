@@ -13,7 +13,7 @@ app.use('/js', express.static('./public/js'));
 app.use('/views', express.static('./public/views'));
 app.use(routes);
 
-var port = process.env.PORT || 3000;
+var port = process.env.PORT || 3003;
 app.listen(port);
 
 

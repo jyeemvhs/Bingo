@@ -10,7 +10,7 @@ var router = express.Router();
     let numBalls = NUM_VALUES_PER_ROW*NUM_ROWS_CAGE;
     let cage=[];
     let cageReverse=[];
-    let currentIndex;
+    let currentIndex=0;
 
     let identifier = 1;
 
@@ -24,6 +24,15 @@ var router = express.Router();
 
       let winnerValue = 0;
       let winnerName = "";
+
+
+      let totalMessage = "";
+      let messages;
+      let numMessages = 6;
+      messages = Create2DArray(numMessages);
+      for (let a=0;a<numMessages;a++)
+        messages[a] = "";
+      let currMessage = 0;
 
     reset();
 
@@ -40,11 +49,10 @@ function Create2DArray(rows) {
 
 
 function reset() {
-  console.log("in reset");
+//      totalMessage = "";
       winnerValue = 0;
       winnerName = "";
 
-  console.log("set resetState to true");
     resetState = true;
         currentIndex = 0;
         for (let i=0;i<numBalls;i++) {
@@ -65,11 +73,6 @@ function reset() {
             if (order == numBalls+1)
                 keepLooping = false;
         }
-
-//        console.log("==============");
-  //      for (let i=0;i<numBalls;i++) {
-    //        console.log("ball = " + i + " " + cage[i]);
-      //  }        
 }
 
 
@@ -77,72 +80,70 @@ function reset() {
 
 let infoVal = 0;
 router.get("/",function(request,response){
-	response.sendFile(__dirname + "/public/views/index.html");
+  response.sendFile(__dirname + "/public/views/index.html");
 });
 router.get("/info",function(request,response){
-	infoVal++;
-	response.sendFile(__dirname + "/public/views/info.html");
+  infoVal++;
+  response.sendFile(__dirname + "/public/views/info.html");
 });
 
 var infoList = [];
 
 router.post('/change', function(req, res){
 
-	if (req.body.index < 0 || req.body.name == "") {
-		res.json(null);
-	} else {
-		temp = {name:req.body.name,color:req.body.color,rating:req.body.rating};
-		infoList[req.body.index] = temp;
-		res.json(infoList[req.body.index]);
-	}
+  if (req.body.index < 0 || req.body.name == "") {
+    res.json(null);
+  } else {
+    temp = {name:req.body.name,color:req.body.color,rating:req.body.rating};
+    infoList[req.body.index] = temp;
+    res.json(infoList[req.body.index]);
+  }
 
 });
 
     function ChooseBall() {
-      console.log("set resetState to false");
       resetState = false;
         cageReverse[cage[currentIndex]-1] = 1;
         if (currentIndex < numBalls-1)
-        	currentIndex++;
+          currentIndex++;
     }
 
 router.get('/info2', function(req, res){
   let ballNum = -1;
-	if (req.query.index == 2) {
-    console.log("call reset")
-		reset();
+  if (req.query.index == 2) {
+    reset();
     res.json({val:req.query.index,ballNum:ballNum});
     return;
-	}
-	else if (req.query.index == 3) {
-		    ballNum = cage[currentIndex];
+  }
+  else if (req.query.index == 3) {
+        ballNum = cage[currentIndex];
         ChooseBall(); 
         res.json({val:req.query.index,ballNum:ballNum});
         return;
-	}
+  }
   else if (req.query.index == 4) {
-        console.log("info2 index 4");
-        res.json({val:req.query.index,winnerName:winnerName});
+        res.json({val:req.query.index,winnerName:winnerName,message:totalMessage});
+         
         return;
   }
 
 
-	
+  
 });
 
 
 
 
 function CreateCard(_ident) {
-	
+  
 
         for (let zrow=0;zrow<NUM_ROWS_CARD;zrow++) {
-        	for (let zcol=0;zcol<NUM_COLUMNS_CARD;zcol++) {
+          for (let zcol=0;zcol<NUM_COLUMNS_CARD;zcol++) {
 
-	                board1[zrow][zcol] = -1;
+                  board1[zrow][zcol] = -1;
 
            }
-        }	
+        } 
 
 
 
@@ -156,9 +157,9 @@ function CreateCard(_ident) {
                    for (let j=0;j<NUM_ROWS_CARD;j++) {
 
 
-                       		if (board1[j][col] == randomVal) {
-                           		goodVal = false;
-                       		}	      
+                          if (board1[j][col] == randomVal) {
+                              goodVal = false;
+                          }       
 
                    }
                    if (goodVal) {
@@ -172,7 +173,7 @@ function CreateCard(_ident) {
 
 
 
-               	 board1[row][col] = randomVal; 
+                 board1[row][col] = randomVal; 
 
 
            }
@@ -238,25 +239,22 @@ function CreateCard(_ident) {
 
 router.get('/player2', function(req, res){
 
-	let ident = req.query.identifier;	
-//	console.log(req.query.index);
-	if (req.query.index == 1) {
+  let ident = req.query.identifier; 
+  if (req.query.index == 1) {
 //Create card numbers    
-		if (ident == -1) {
-			ident = identifier++;
-			CreateCard(ident);
-		}
-		res.json({val:req.query.index,identifier:ident,board:board1});		
-		return;
-	}
-	else if (req.query.index == 2) {
+    if (ident == -1) {
+      ident = identifier++;
+      CreateCard(ident);
+    }
+    res.json({val:req.query.index,identifier:ident,board:board1});    
+    return;
+  }
+  else if (req.query.index == 2) {
 //Check win    
-		if (ident != -1) {
-//			console.log(req.query.board);
+    if (ident != -1) {
       let name = req.query.name;
-      console.log(name);
-			let tempBoard = req.query.board;
-			let winner = CheckWin(tempBoard);
+      let tempBoard = req.query.board;
+      let winner = CheckWin(tempBoard);
 
 // winnerReturn
 // 1 = first winner
@@ -270,29 +268,52 @@ router.get('/player2', function(req, res){
         } else
           winnerReturn = 2;
         winnerValue = 1;
-        console.log(name + " has won!");
-      } else {
-        console.log(name + " did not win.");
       }
 
-			res.json({val:req.query.index,identifier:ident,winner:winnerReturn});		
-			return;
-		}		
-	}
+      res.json({val:req.query.index,identifier:ident,winner:winnerReturn});   
+      return;
+    }   
+  }
   else if (req.query.index == 3) {
+
 //polling to get mostRecentBall or if reset cage.    
     if (ident != -1) {
       if (resetState) {
-          console.log("reset client");
-          res.json({val:4,identifier:ident,ballNum:0});
+          res.json({val:4,identifier:ident,ballNum:0,message:totalMessage});
           return;
       }      
       let ballNum = GetCurrentBall();
-//      console.log("ballNum = " + ballNum);
-      res.json({val:req.query.index,identifier:ident,ballNum:ballNum});  
+      res.json({val:req.query.index,identifier:ident,ballNum:ballNum,winnerName:winnerName,
+        message:totalMessage});  
       return;
     }    
   }  
+  else if (req.query.index == 5) {  
+
+//A new message was sent.    
+    if (ident != -1) {
+//console.log(req.query.message);
+      messages[currMessage] = req.query.message;
+      let index = currMessage;
+      currMessage++;
+      if (currMessage > numMessages-1)
+        currMessage = 0;
+
+      totalMessage = "";
+      for (let i=0;i<numMessages-1;i++) {
+        totalMessage += messages[index] + "\n";
+        index--;
+        if (index < 0)
+          index = numMessages-1;
+      }
+      totalMessage += messages[index];
+//console.log(totalMessage);
+
+      res.json({val:req.query.index,identifier:ident});  
+      return;
+    }    
+
+  }    
 
 });
 
