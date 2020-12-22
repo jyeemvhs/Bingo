@@ -89,7 +89,7 @@ function canvasApp(){
 
    //canvasApp level variables
     var keyPressList = [];
-    var windowWidth = 700;
+    var windowWidth = 692;
     var windowHeight = 400;
     var mouseX = 0;
     var mouseY = 0;
@@ -129,7 +129,7 @@ function canvasApp(){
     {
 //These need to be modified when changes are made to location of canvas!!!!!!        
         xpixel = e.clientX - 8;
-        ypixel = e.clientY - 180;
+        ypixel = e.clientY - 200;
         Select(xpixel,ypixel);
     }
     function input()
@@ -502,19 +502,19 @@ function canvasApp(){
   
   <body> 
         
-        <label for="username">Name:</label>
-        <input id="username" type="text" name="username" value="">
+        <label for="username" style="font-size: 16pt">Name:</label>
+        <input id="username" type="text" name="username" value="" style="font-size: 14pt">
         <input type="button" value="Bingo" onclick="msgBingo()">
         <br>
         <br>
-        <label for="message">Message:</label>
-        <input id="message" type="text" name="message" value="" size="30" maxlength="50">        
+        <label for="message" style="font-size: 16pt">Message:</label>
+        <input id="message" type="text" name="message" value="" size="30" maxlength="50" style="font-size: 14pt">        
         <br>
-        <textarea id="comments" name="comments" rows="6" cols="80"></textarea>
+        <textarea id="comments" name="comments" rows="6" cols="77" style="font-size: 12pt"></textarea>
 
 
 
-<canvas id="canvas" width="700" height="400"  style="position:absolute;top: 180px; left: 8px;">
+<canvas id="canvas" width="692" height="400"  style="position:absolute;top: 200px; left: 8px;">
  Your browser does not support HTML5 Canvas.
 </canvas>
 
