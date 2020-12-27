@@ -23,8 +23,12 @@ var router = express.Router();
       board1 = Create2DArray(NUM_ROWS_CARD*NUM_COLUMNS_CARD);
 
       let winnerValue = 0;
-      let winnerName = "";
+      let winnerName1 = "";
+      let winnerName2 = "";
+      let winnerName3 = "";
+      let winnerName4 = "";
 
+      let gameType = 1;
 
       let totalMessage = "";
       let messages;
@@ -51,7 +55,10 @@ function Create2DArray(rows) {
 function reset() {
 //      totalMessage = "";
       winnerValue = 0;
-      winnerName = "";
+      winnerName1 = "";
+      winnerName2 = "";
+      winnerName3 = "";
+      winnerName4 = "";
 
     resetState = true;
         currentIndex = 0;
@@ -105,27 +112,39 @@ router.post('/change', function(req, res){
 
     function ChooseBall() {
       resetState = false;
-        cageReverse[cage[currentIndex]-1] = 1;
-        if (currentIndex < numBalls-1)
-          currentIndex++;
+      if (currentIndex == numBalls) {
+        return (cage[currentIndex-1]);
+      }
+      cageReverse[cage[currentIndex]-1] = 1;
+      return (cage[currentIndex++]);
     }
 
 router.get('/info2', function(req, res){
-  let ballNum = -1;
+  let ballNumA = -1;
   if (req.query.index == 2) {
     reset();
-    res.json({val:req.query.index,ballNum:ballNum});
+    gameType = req.query.gameType;
+    res.json({val:req.query.index,ballNum:ballNumA});
     return;
   }
   else if (req.query.index == 3) {
-        ballNum = cage[currentIndex];
-        ChooseBall(); 
-        res.json({val:req.query.index,ballNum:ballNum});
+        ballNumA = ChooseBall(); 
+        res.json({val:req.query.index,ballNum:ballNumA});
         return;
   }
   else if (req.query.index == 4) {
-        res.json({val:req.query.index,winnerName:winnerName,message:totalMessage});
+        res.json({val:req.query.index,winnerName1:winnerName1,winnerName2:winnerName2,
+        winnerName3:winnerName3,winnerName4:winnerName4,message:totalMessage});
          
+        return;
+  }
+  else if (req.query.index == 6) {
+      totalMessage = "";
+      for (let a=0;a<numMessages;a++)
+        messages[a] = "";
+      currMessage = 0;
+
+        res.json({val:req.query.index});     
         return;
   }
 
@@ -136,7 +155,7 @@ router.get('/info2', function(req, res){
 
 
 
-function CreateCard(_ident) {
+function CreateCard() {
   
 
         for (let zrow=0;zrow<NUM_ROWS_CARD;zrow++) {
@@ -196,15 +215,17 @@ function CreateCard(_ident) {
     function checkValue(value,row,col) {
         if (row == Math.floor(NUM_ROWS_CARD/2) && col == Math.floor(NUM_COLUMNS_CARD/2))
           return (1);
-
-        for (let i=0;i<currentIndex;i++) {
-              if (value == cage[i])
-                   return(1);
-        }
+        if (cageReverse[value-1] == 1)
+          return(1);
+//        for (let i=0;i<currentIndex;i++) {
+//              if (value == cage[i]) {
+//                   return(1);
+//              }
+//        }
         return (0);
     }
 
-    function CheckWin(tempBoard) {
+    function CheckWinRegular(tempBoard) {
         let total = 0;
         
         for (let row=0;row<NUM_ROWS_CARD;row++) {
@@ -212,7 +233,6 @@ function CreateCard(_ident) {
             for (let i=0;i<NUM_COLUMNS_CARD;i++) {
                 total += checkValue(tempBoard[row][i],row,i);
             }    
-            console.log(total);
             if (total == NUM_ROWS_CARD)
                 return (true);
         }
@@ -221,7 +241,6 @@ function CreateCard(_ident) {
             for (let i=0;i<NUM_ROWS_CARD;i++) {
                 total += checkValue(tempBoard[i][col],i,col);
             }    
-            console.log(total);
             if (total == NUM_ROWS_CARD)
                 return (true);
         }
@@ -245,37 +264,189 @@ function CreateCard(_ident) {
     }
     
 
+//////
+    function CheckWin4Corners(tempBoard) {
+        let total = 0;
+
+        total = 0;
+        total += checkValue(tempBoard[0][0],0,0);
+        total += checkValue(tempBoard[4][4],4,4);
+        total += checkValue(tempBoard[0][4],0,4);
+        total += checkValue(tempBoard[4][0],4,0);
+        if (total == 4)
+            return (true);
+        return (false);
+    }
+    
+    function CheckWinOx(tempBoard) {
+
+      if (checkValue(tempBoard[0][0],0,0) == 0)
+        return (false);
+      if (checkValue(tempBoard[0][1],0,1) == 0)
+        return (false);
+      if (checkValue(tempBoard[0][2],0,2) == 0)
+        return (false);
+
+      if (checkValue(tempBoard[1][0],1,0) == 0)
+        return (false);
+      if (checkValue(tempBoard[1][2],1,2) == 0)
+        return (false);
+
+      if (checkValue(tempBoard[2][0],2,0) == 0)
+        return (false);
+      if (checkValue(tempBoard[2][1],2,1) == 0)
+        return (false);
+      if (checkValue(tempBoard[2][2],2,2) == 0)
+        return (false);
+
+      if (checkValue(tempBoard[3][3],3,3) == 0)
+        return (false);
+      if (checkValue(tempBoard[4][4],4,4) == 0)
+        return (false);
+
+      if (checkValue(tempBoard[4][2],4,2) == 0)
+        return (false);
+      if (checkValue(tempBoard[2][4],2,4) == 0)
+        return (false);
+
+        return (true);
+    }
+    
+
+    function CheckWin2021(tempBoard) {
+
+      if (checkValue(tempBoard[0][0],0,0) == 0)
+        return (false);
+      if (checkValue(tempBoard[0][1],0,1) == 0)
+        return (false);
+      if (checkValue(tempBoard[0][2],0,2) == 0)
+        return (false);
+
+      if (checkValue(tempBoard[1][2],1,2) == 0)
+        return (false);
+      if (checkValue(tempBoard[2][1],2,1) == 0)
+        return (false);
+      if (checkValue(tempBoard[3][0],3,0) == 0)
+        return (false);
+
+      if (checkValue(tempBoard[4][0],4,0) == 0)
+        return (false);
+      if (checkValue(tempBoard[4][1],4,1) == 0)
+        return (false);
+      if (checkValue(tempBoard[4][2],4,2) == 0)
+        return (false);
+
+
+      if (checkValue(tempBoard[0][4],0,4) == 0)
+        return (false);
+      if (checkValue(tempBoard[1][4],1,4) == 0)
+        return (false);
+      if (checkValue(tempBoard[2][4],2,4) == 0)
+        return (false);
+      if (checkValue(tempBoard[3][4],3,4) == 0)
+        return (false);
+      if (checkValue(tempBoard[4][4],4,4) == 0)
+        return (false);
+
+
+
+
+        return (true);
+    }
+
+    function CheckWinChunHoon(tempBoard) {
+
+      if (checkValue(tempBoard[0][0],0,0) == 0)
+        return (false);
+      if (checkValue(tempBoard[0][1],0,1) == 0)
+        return (false);
+      if (checkValue(tempBoard[0][2],0,2) == 0)
+        return (false);
+
+      if (checkValue(tempBoard[1][0],1,0) == 0)
+        return (false);
+
+      if (checkValue(tempBoard[2][0],2,0) == 0)
+        return (false);
+      if (checkValue(tempBoard[2][1],2,1) == 0)
+        return (false);
+      if (checkValue(tempBoard[2][2],2,2) == 0)
+        return (false);
+
+      if (checkValue(tempBoard[2][4],2,4) == 0)
+        return (false);
+
+      if (checkValue(tempBoard[3][2],3,2) == 0)
+        return (false);
+      if (checkValue(tempBoard[3][3],3,3) == 0)
+        return (false);
+      if (checkValue(tempBoard[3][4],3,4) == 0)
+        return (false);
+
+      if (checkValue(tempBoard[4][2],4,2) == 0)
+        return (false);
+      if (checkValue(tempBoard[4][4],4,4) == 0)
+        return (false);
+
+      return (true);
+    }
+
+////
+
+
+
+
 router.get('/player2', function(req, res){
 
   let ident = req.query.identifier; 
   if (req.query.index == 1) {
-//Create card numbers    
-    if (ident == -1) {
+//Create card numbers
       ident = identifier++;
-      CreateCard(ident);
-    }
-    res.json({val:req.query.index,identifier:ident,board:board1});    
-    return;
+      CreateCard();
+      if (currentIndex == 0)
+        res.json({val:req.query.index,identifier:ident,board:board1,playValid:true});    
+      else
+        res.json({val:req.query.index,identifier:ident,board:board1,playValid:false});    
   }
   else if (req.query.index == 2) {
 //Check win    
+    if (req.query.name == "") {
+      res.json({val:req.query.index,identifier:ident,winner:-4});   
+      return;      
+    }
+
+
     if (ident != -1) {
       let name = req.query.name;
       let tempBoard = req.query.board;
-      let winner = CheckWin(tempBoard);
+      let winner = false;
+      if (gameType == 1)
+        winner = CheckWinRegular(tempBoard);
+      else if (gameType == 2)
+        winner = CheckWin4Corners(tempBoard);
+      else if (gameType == 3)
+        winner = CheckWinOx(tempBoard);
+      else if (gameType == 4)
+        winner = CheckWin2021(tempBoard);
+      else if (gameType == 5)
+        winner = CheckWinChunHoon(tempBoard);
 
 // winnerReturn
-// 1 = first winner
-// -1 = not winner
-// 2 = winner but not first       
+// -1 = no bingo
+// pos number = yes bingo and the place you finished    
       let winnerReturn = -1;
       if (winner == true) {
         if (winnerValue == 0) {
-          winnerReturn = 1;
-          winnerName = name;
-        } else
-          winnerReturn = 2;
-        winnerValue = 1;
+          winnerName1 = name;
+        } else if (winnerValue == 1) {
+          winnerName2 = name;
+        }  else if (winnerValue == 2) {
+          winnerName3 = name;
+        }  else if (winnerValue == 3) {
+          winnerName4 = name;
+        }
+        winnerValue++;
+        winnerReturn = winnerValue;
       }
 
       res.json({val:req.query.index,identifier:ident,winner:winnerReturn});   
@@ -284,23 +455,29 @@ router.get('/player2', function(req, res){
   }
   else if (req.query.index == 3) {
 
-//polling to get mostRecentBall or if reset cage.    
     if (ident != -1) {
       if (resetState) {
-          res.json({val:4,identifier:ident,ballNum:0,message:totalMessage});
+//polling to get reset cage.    
+          res.json({val:4,identifier:ident,ballNum:0,gameType:gameType});
           return;
       }      
-      let ballNum = GetCurrentBall();
-      res.json({val:req.query.index,identifier:ident,ballNum:ballNum,winnerName:winnerName,
-        message:totalMessage});  
+//polling to get mostRecentBall.    
+      let ballNumB = GetCurrentBall();
+      res.json({val:req.query.index,identifier:ident,ballNum:ballNumB,
+      winnerName1:winnerName1,winnerName2:winnerName2,
+      winnerName3:winnerName3,winnerName4:winnerName4,
+      gameType:gameType});  
       return;
     }    
   }  
+  else if (req.query.index == 30) {
+//polling to get messages.    
+      res.json({val:req.query.index,message:totalMessage});  
+      return;
+  }    
   else if (req.query.index == 5) {  
-
 //A new message was sent.    
     if (ident != -1) {
-//console.log(req.query.message);
       messages[currMessage] = req.query.message;
       let index = currMessage;
       currMessage++;
@@ -315,8 +492,6 @@ router.get('/player2', function(req, res){
           index = numMessages-1;
       }
       totalMessage += messages[index];
-//console.log(totalMessage);
-
       res.json({val:req.query.index,identifier:ident});  
       return;
     }    
