@@ -30,6 +30,10 @@ var router = express.Router();
 
       let gameType = 1;
 
+      let howManyA = 1;
+      let numbers=[];
+
+
       let totalMessage = "";
       let messages;
       let numMessages = 6;
@@ -112,24 +116,42 @@ router.post('/change', function(req, res){
 
     function ChooseBall() {
       resetState = false;
-      if (currentIndex == numBalls) {
-        return (cage[currentIndex-1]);
+//console.log("numBalls = " + numBalls);
+//console.log(currentIndex + howManyA);
+      if (currentIndex + howManyA > numBalls) {
+  //      console.log("change howMany");
+        howManyA = numBalls - currentIndex; 
       }
-      cageReverse[cage[currentIndex]-1] = 1;
-      return (cage[currentIndex++]);
+   //   if (currentIndex == numBalls) {
+   //     return (cage[currentIndex-1]);
+   //   }
+
+      let j = currentIndex;
+      for (let i=0;i<howManyA;i++) {
+        cageReverse[cage[j++]-1] = 1;
+        numbers[i] = cage[currentIndex++];
+      }
+//      cageReverse[cage[currentIndex]-1] = 1;
+//      return (cage[currentIndex++]);
     }
 
 router.get('/info2', function(req, res){
-  let ballNumA = -1;
+
   if (req.query.index == 2) {
     reset();
     gameType = req.query.gameType;
-    res.json({val:req.query.index,ballNum:ballNumA});
+    res.json({val:req.query.index});
     return;
   }
   else if (req.query.index == 3) {
-        ballNumA = ChooseBall(); 
-        res.json({val:req.query.index,ballNum:ballNumA});
+//        console.log(req.query.howMany);
+        howManyA = Number(req.query.howMany);
+  //        let ballNumA = -1;
+  //        ballNumA = ChooseBall(); 
+        ChooseBall(); 
+//        console.log("howMany really " + howManyA);
+//        res.json({val:req.query.index,howMany:howMany,ballNum:ballNumA});
+        res.json({val:req.query.index,howMany:howManyA,numbers:numbers});
         return;
   }
   else if (req.query.index == 4) {
@@ -462,8 +484,10 @@ router.get('/player2', function(req, res){
           return;
       }      
 //polling to get mostRecentBall.    
-      let ballNumB = GetCurrentBall();
-      res.json({val:req.query.index,identifier:ident,ballNum:ballNumB,
+
+//      let ballNumB = GetCurrentBall();
+//      res.json({val:req.query.index,identifier:ident,ballNum:ballNumB,
+      res.json({val:req.query.index,identifier:ident,howMany:howManyA,numbers:numbers,
       winnerName1:winnerName1,winnerName2:winnerName2,
       winnerName3:winnerName3,winnerName4:winnerName4,
       gameType:gameType});  

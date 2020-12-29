@@ -35,6 +35,10 @@ let globalVal =-1;
 
     let mostRecentBall = -1;
 
+    let howMany = 1;
+    let numbers=[];
+
+
 polling();
 
 function polling() {
@@ -217,7 +221,13 @@ function canvasApp(){
             {
                 if (cageReverse[index] == 1) {
                     
-                    if (mostRecentBall == index)
+                    let recent = false;
+                    for (let j=0;j < howMany;j++) {
+                        if (index == numbers[j]-1)
+                            recent = true;
+                    }
+                    if (recent)
+//                    if (mostRecentBall == index)
                         context.fillStyle = "rgb(255,255,0)";
                     else
                         context.fillStyle = "rgb(155,155,155)";
@@ -363,6 +373,8 @@ function canvasApp(){
             <option value="ChunHoon">ChunHoon</option>
         </select>           
 
+        <label for="howMany">How Many:</label>
+        <input id="howMany" type="number" name="howMany" value="1" min="1" max="20">
         <input type="button" value="Number" onclick="msgNumber()">
 
 <canvas id="canvas" width="788" height="200"  style="position:absolute;top: 280px; left: 8px;">
@@ -391,7 +403,7 @@ function msgGameType() {
         $.get("/info2",{index:8},successInfo);
 }
 function msgNumber() {
-        $.get("/info2",{index:3},successInfo);
+        $.get("/info2",{index:3,howMany:$("#howMany").val()},successInfo);
 }
 function msgClear() {
         $.get("/info2",{index:6},successInfo);
@@ -414,10 +426,18 @@ function successInfo(data) {
     } else if (data.val == 3) {
 //get the new number chosen.        
         globalVal = data.val;
-        if (data.ballNum != -1) {
-            cageReverse[data.ballNum-1] = 1;
-            mostRecentBall = data.ballNum-1;
-        }
+
+howMany = data.howMany;
+for (let i=0;i<data.howMany;i++) {
+    numbers[i] = data.numbers[i];
+    cageReverse[numbers[i]-1] = 1;
+}
+
+//temp comment out below        
+//        if (data.ballNum != -1) {
+  //          cageReverse[data.ballNum-1] = 1;
+    //        mostRecentBall = data.ballNum-1;
+      //  }
     } else if (data.val == 4) {
 //polling the messages.
         $("#comments").val("");

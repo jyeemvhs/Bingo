@@ -26,6 +26,9 @@
     let cageReverse = [];
     let mostRecentBall = -1;
 
+    let howMany = 1;
+    let numbers=[];
+
     let NUM_ROWS_CARD = 5;
     let NUM_COLUMNS_CARD = 5;
  
@@ -44,6 +47,8 @@
     let totalMessage = "";
     let gameType = 1;
 
+    let imageNum = 1;
+    let imageDir = 1;
 polling();
 function polling() {
     if (identifier != -1) {
@@ -170,11 +175,12 @@ function canvasApp(){
         context.strokeStyle = '#000000';
         context.strokeRect(0, 0, getWidth2(), getHeight2());
 
+        if (winnerName1 == "" && winnerName2 == "" && winnerName3 == "" && winnerName4 == "") {
 // draw the image
-  let imgImage = document.getElementById("ox");
+            let imgImage = document.getElementById("chunHoonOx");
  // context.drawImage(imgImage, 350, 170);
-  context.drawImage(imgImage, getX(5*Math.floor(Math.floor(getWidth2()/2)/NUM_COLUMNS_CARD)), getY(Math.floor(getHeight2()/3)));
-
+            context.drawImage(imgImage, getX(5*Math.floor(Math.floor(getWidth2()/2)/NUM_COLUMNS_CARD)), getY(Math.floor(getHeight2()/3+18)));
+        }
 
 //horizontal lines
         context.save(); //save current state in stack
@@ -222,7 +228,15 @@ function canvasApp(){
             {
                 if (cageReverse[index] == 1) {
                     
-                    if (mostRecentBall == index+1)
+console.log("======== " + index);
+                    let recent = false;
+                    for (let j=0;j < howMany;j++) {
+console.log(numbers[j]);
+                        if (index+1 == numbers[j])
+                            recent = true;
+                    }
+                    if (recent)                    
+//                    if (mostRecentBall == index+1)
                         context.fillStyle = "rgb(255,255,0)";
                     else
                         context.fillStyle = "rgb(155,155,155)";
@@ -468,7 +482,7 @@ function canvasApp(){
           context.strokeStyle = '#000000';
           context.font = (ydelta-10) + 'px Arial';
           context.textBaseline = 'bottom';
-          context.fillText  ("Regular",getX(xoffset),getY(yoffset-35));
+          context.fillText  ("Regular Bingo",getX(xoffset),getY(yoffset-35));
           context.closePath();               
         }
         else if (gameType == 2) {
@@ -477,7 +491,7 @@ function canvasApp(){
           context.strokeStyle = '#000000';
           context.font = (ydelta-10) + 'px Arial';
           context.textBaseline = 'bottom';
-          context.fillText  ("4 Corners",getX(xoffset),getY(yoffset-35));
+          context.fillText  ("4 Corners Bingo",getX(xoffset),getY(yoffset-35));
           context.closePath();               
         }
         else if (gameType == 3) {
@@ -486,7 +500,7 @@ function canvasApp(){
           context.strokeStyle = '#000000';
           context.font = (ydelta-10) + 'px Arial';
           context.textBaseline = 'bottom';
-          context.fillText  ("Ox",getX(xoffset) ,getY(yoffset-35));
+          context.fillText  ("Ox Bingo",getX(xoffset) ,getY(yoffset-35));
           context.closePath();               
         }
         else if (gameType == 4) {
@@ -495,7 +509,7 @@ function canvasApp(){
           context.strokeStyle = '#000000';
           context.font = (ydelta-10) + 'px Arial';
           context.textBaseline = 'bottom';
-          context.fillText  ("2021",getX(xoffset) ,getY(yoffset-35));
+          context.fillText  ("2021 Bingo",getX(xoffset) ,getY(yoffset-35));
           context.closePath();               
         }
         else if (gameType == 5) {
@@ -504,7 +518,7 @@ function canvasApp(){
           context.strokeStyle = '#000000';
           context.font = (ydelta-10) + 'px Arial';
           context.textBaseline = 'bottom';
-          context.fillText  ("ChunHoon",getX(xoffset) ,getY(yoffset-35));
+          context.fillText  ("ChunHoon Bingo",getX(xoffset) ,getY(yoffset-35));
           context.closePath();               
         }
 
@@ -513,54 +527,45 @@ function canvasApp(){
           context.beginPath();
           context.fillStyle = "rgb(0,0,0)";
           context.strokeStyle = '#000000';
-          context.font = (ydelta-3) + 'px Arial';
-          context.textBaseline = 'bottom';
-          
-        context.fillText  ("BINGO #" + winner,getX(xoffset)+xdelta*5+8 ,getY(yoffset));
+          context.font = (ydelta-10) + 'px Arial';
+          context.textBaseline = 'bottom'; 
+          context.fillText  ("BINGO #" + winner,getX(xoffset)+xdelta*5+8 ,getY(yoffset-35));
           context.closePath();             
         } 
         else if (winner == -1) {
           context.beginPath();
           context.fillStyle = "rgb(0,0,0)";
           context.strokeStyle = '#000000';
-          context.font = (ydelta-3) + 'px Arial';
+          context.font = (ydelta-10) + 'px Arial';
           context.textBaseline = 'bottom';
-          
-        context.fillText  ("NO BINGO",getX(xoffset)+xdelta*5+8 ,getY(yoffset));
+          context.fillText  ("NO BINGO",getX(xoffset)+xdelta*5+8 ,getY(yoffset-35));
           context.closePath();                 
-            
         }
         else if (winner == -2) {
           context.beginPath();
           context.fillStyle = "rgb(0,0,0)";
           context.strokeStyle = '#000000';
-          context.font = (ydelta-3) + 'px Arial';
+          context.font = (ydelta-10) + 'px Arial';
           context.textBaseline = 'bottom';
-          
-        context.fillText  ("ONLY 1 TRY",getX(xoffset)+xdelta*5+8 ,getY(yoffset));
+          context.fillText  ("ONLY 1 TRY",getX(xoffset)+xdelta*5+8 ,getY(yoffset-35));
           context.closePath();                 
-            
         } else if (winner == -3) {
           context.beginPath();
           context.fillStyle = "rgb(0,0,0)";
           context.strokeStyle = '#000000';
-          context.font = (ydelta-8) + 'px Arial';
+          context.font = (ydelta-10) + 'px Arial';
           context.textBaseline = 'bottom';
-          
-        context.fillText  ("GAME IN PROGRESS",getX(xoffset)+xdelta*5+8 ,getY(yoffset));
+          context.fillText  ("GAME IN PROGRESS",getX(xoffset)+xdelta*5+8 ,getY(yoffset-35));
           context.closePath();                 
         }  else if (winner == -4) {
           context.beginPath();
           context.fillStyle = "rgb(0,0,0)";
           context.strokeStyle = '#000000';
-          context.font = (ydelta-8) + 'px Arial';
+          context.font = (ydelta-10) + 'px Arial';
           context.textBaseline = 'bottom';
-          
-        context.fillText  ("NEED A NAME",getX(xoffset)+xdelta*5+8 ,getY(yoffset));
+          context.fillText  ("NEED A NAME",getX(xoffset)+xdelta*5+8 ,getY(yoffset-35));
           context.closePath();                 
         }
-
-
 
 
        if (winnerName1 != "") {
@@ -606,7 +611,30 @@ function canvasApp(){
         context.fillText  ("4. " + winnerName4,getX(xoffset)+xdelta*5+8 ,getY(yoffset)+4*ydelta);
           context.closePath();                 
                     
-       }                
+       }        
+
+
+// draw the image
+            let imgImage2 = document.getElementById("chunHoonLogo");
+            context.drawImage(imgImage2, getX(139), getY(281));
+
+            if (winnerName1 != "") {
+                let imgImage13 = document.getElementById("ox1");
+                let imgImage23 = document.getElementById("ox2");
+                let imgImage33 = document.getElementById("ox3");
+                let imgImage43 = document.getElementById("ox4");
+                let imgImage53 = document.getElementById("ox5");
+                if (imageNum == 1 || imageNum == 2)
+                    context.drawImage(imgImage13, getX(591), getY(170));
+                else if (imageNum == 3 || imageNum == 4)
+                    context.drawImage(imgImage23, getX(596), getY(178));
+                else if (imageNum == 5 || imageNum == 6)
+                    context.drawImage(imgImage33, getX(600), getY(180));
+                else if (imageNum == 7 || imageNum == 8)
+                    context.drawImage(imgImage43, getX(605), getY(180));
+                else if (imageNum == 9 || imageNum == 10)
+                    context.drawImage(imgImage53, getX(606), getY(178));
+            }
 /////////////
         context.restore(); 
     }
@@ -616,7 +644,11 @@ function canvasApp(){
     }
     function animate()
     {
-
+       imageNum+=imageDir;
+        if (imageNum >= 10)
+            imageDir = -1
+        if (imageNum <= 1)
+            imageDir = 1;
     }
 
     function Select(_xpixel,_ypixel) {
@@ -679,7 +711,13 @@ function canvasApp(){
   </head>
   
   <body> 
-        <img id="ox" width="0" height="0" src="chunHoon.jpg">
+        <img id="chunHoonOx" width="0" height="0" src="chunHoonOx.jpg">
+        <img id="chunHoonLogo" width="0" height="0" src="CHLogoTransp.png">
+        <img id="ox1" width="0" height="0" src="ox1.png">
+        <img id="ox2" width="0" height="0" src="ox2.png">
+        <img id="ox3" width="0" height="0" src="ox3.png">
+        <img id="ox4" width="0" height="0" src="ox4.png">
+        <img id="ox5" width="0" height="0" src="ox5.png">
         
         <label for="username" style="font-size: 16pt">Name:</label>
         <input id="username" type="text" name="username" value="" maxlength="10" style="font-size: 14pt">
@@ -760,11 +798,19 @@ function successInfo(data) {
           winnerName4 = data.winnerName4;
       }            
 
-//polling to get the mostRecentBall chosen.            
-      if (data.ballNum != undefined && data.ballNum != -1) {
-          mostRecentBall = data.ballNum;
-          cageReverse[data.ballNum-1] = 1;
-      }
+//polling to get the mostRecentBall chosen. 
+howMany = data.howMany;
+for (let i=0;i<data.howMany;i++) {
+    numbers[i] = data.numbers[i];
+    cageReverse[numbers[i]-1] = 1;
+}
+
+
+//temp comment out below
+  //    if (data.ballNum != undefined && data.ballNum != -1) {
+  //        mostRecentBall = data.ballNum;
+  //        cageReverse[data.ballNum-1] = 1;
+  //    }
       gameType = data.gameType;
   }        
   else if (data.val == 4) {
