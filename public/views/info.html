@@ -33,11 +33,14 @@ let globalVal =-1;
         cageReverse[i] = 0;
     }
 
-    let mostRecentBall = -1;
+//    let mostRecentBall = -1;
+    let numActivePlayers = 0;
 
     let howMany = 1;
     let numbers=[];
 
+    let NUM_ROWS_CARD = 5;
+    let NUM_COLUMNS_CARD = 5;  
 
 polling();
 
@@ -57,10 +60,10 @@ function successInfo2(data) {
             winnerName3 = data.winnerName3;
             winnerName4 = data.winnerName4;
 
-             $("#comments").val("");
-             $("#comments").val(data.message);
+            numActivePlayers = data.numActivePlayers;
 
-
+            $("#comments").val("");
+            $("#comments").val(data.message);
         }
     }
 }
@@ -238,6 +241,7 @@ function canvasApp(){
                     context.closePath(); 
 
                 }
+
                 index++;
             }
         }        
@@ -314,6 +318,17 @@ function canvasApp(){
           context.fillText  ("4. " + winnerName4,getX(12*xdelta) ,getY(yoffset)+ydelta*6);          
           context.closePath();            
         }        
+
+        if (winnerName1 == "") {
+          context.beginPath();
+          context.fillStyle = "rgb(0,0,0)";
+          context.strokeStyle = '#000000';
+          context.font = (ydelta-10) + 'px Arial';
+          context.textBaseline = 'bottom';
+          context.fillText  ("" + numActivePlayers + " Players",getX(xoffset) ,getY(yoffset+6*ydelta));
+          context.closePath();  
+        }
+
         context.restore(); 
     }
 
@@ -414,7 +429,7 @@ function successInfo(data) {
         return;   //error
 
     if (data.val == 2) {
-//start a new game.        
+//start a new game.       
         globalVal = -1;
         winnerName1 = "";
         winnerName2 = "";
@@ -427,21 +442,17 @@ function successInfo(data) {
 //get the new number chosen.        
         globalVal = data.val;
 
-howMany = data.howMany;
-for (let i=0;i<data.howMany;i++) {
-    numbers[i] = data.numbers[i];
-    cageReverse[numbers[i]-1] = 1;
-}
+        howMany = data.howMany;
+        for (let i=0;i<data.howMany;i++) {
+            numbers[i] = data.numbers[i];
+            cageReverse[numbers[i]-1] = 1;
+        }
 
 //temp comment out below        
 //        if (data.ballNum != -1) {
   //          cageReverse[data.ballNum-1] = 1;
     //        mostRecentBall = data.ballNum-1;
       //  }
-    } else if (data.val == 4) {
-//polling the messages.
-        $("#comments").val("");
-        $("#comments").val(data.message);
     } else if (data.val == 5) {
 //a new message was sent to the server.
     } else if (data.val == 6) {

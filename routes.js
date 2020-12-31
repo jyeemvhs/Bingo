@@ -42,6 +42,12 @@ var router = express.Router();
         messages[a] = "";
       let currMessage = 0;
 
+      let numActivePlayers = 0;
+      let numPlayers = 0;
+      let activePlayers=[];
+
+      let cardsCount = 0;
+      let cards=[];
     reset();
 
 function Create2DArray(rows) {
@@ -57,12 +63,14 @@ function Create2DArray(rows) {
 
 
 function reset() {
-//      totalMessage = "";
       winnerValue = 0;
       winnerName1 = "";
       winnerName2 = "";
       winnerName3 = "";
       winnerName4 = "";
+
+      for (let i=0;i<numPlayers;i++)
+        activePlayers[i] = false;
 
     resetState = true;
         currentIndex = 0;
@@ -99,20 +107,26 @@ router.get("/info",function(request,response){
   infoVal++;
   response.sendFile(__dirname + "/public/views/info.html");
 });
-
-var infoList = [];
-
-router.post('/change', function(req, res){
-
-  if (req.body.index < 0 || req.body.name == "") {
-    res.json(null);
-  } else {
-    temp = {name:req.body.name,color:req.body.color,rating:req.body.rating};
-    infoList[req.body.index] = temp;
-    res.json(infoList[req.body.index]);
-  }
-
+router.get("/checkwin",function(request,response){
+  response.sendFile(__dirname + "/public/views/checkwin.html");
 });
+router.get("/paper",function(request,response){
+  response.sendFile(__dirname + "/public/views/paper.html");
+});
+
+//var infoList = [];
+//
+//router.post('/change', function(req, res){
+//
+//  if (req.body.index < 0 || req.body.name == "") {
+//    res.json(null);
+//  } else {
+//    temp = {name:req.body.name,color:req.body.color,rating:req.body.rating};
+//    infoList[req.body.index] = temp;
+//    res.json(infoList[req.body.index]);
+//  }
+//
+//});
 
     function ChooseBall() {
       resetState = false;
@@ -156,7 +170,8 @@ router.get('/info2', function(req, res){
   }
   else if (req.query.index == 4) {
         res.json({val:req.query.index,winnerName1:winnerName1,winnerName2:winnerName2,
-        winnerName3:winnerName3,winnerName4:winnerName4,message:totalMessage});
+        winnerName3:winnerName3,winnerName4:winnerName4,numActivePlayers:numActivePlayers,
+        message:totalMessage});
          
         return;
   }
@@ -169,8 +184,42 @@ router.get('/info2', function(req, res){
         res.json({val:req.query.index});     
         return;
   }
+  else if (req.query.index == 9) {
+    let cardNum = Number(req.query.cardNum);
 
+    if (cardNum > numPlayers) {
+        res.json({val:req.query.index,checkWin:-1}); 
+        return;
+    }
+//    if (activePlayers[cardNum-1] == false) {
+//        res.json({val:req.query.index,checkWin:-1}); 
+//        return;      
+//    }
 
+    let i=(cardNum-1)*25;
+    for (let col=0;col<NUM_COLUMNS_CARD;col++) {
+        for (let row=0;row<NUM_ROWS_CARD;row++) {
+          board1[row][col] = cards[i++];
+        }
+    }
+
+    let winner = false;
+    if (gameType == 1)
+      winner = CheckWinRegular(board1);
+    else if (gameType == 2)
+      winner = CheckWin4Corners(board1);
+    else if (gameType == 3)
+      winner = CheckWinOx(board1);
+    else if (gameType == 4)
+      winner = CheckWin2021(board1);
+    else if (gameType == 5)
+      winner = CheckWinChunHoon(board1);
+    if (winner)
+      res.json({val:req.query.index,checkWin:1,board:board1});       
+    else
+      res.json({val:req.query.index,checkWin:0,board:board1});       
+
+  }
   
 });
 
@@ -182,6 +231,7 @@ function CreateCard() {
 
         for (let zrow=0;zrow<NUM_ROWS_CARD;zrow++) {
           for (let zcol=0;zcol<NUM_COLUMNS_CARD;zcol++) {
+
 
                   board1[zrow][zcol] = -1;
 
@@ -215,7 +265,7 @@ function CreateCard() {
 
 
 
-
+                 cards[cardsCount++] = randomVal;
                  board1[row][col] = randomVal; 
 
 
@@ -422,8 +472,12 @@ router.get('/player2', function(req, res){
 
   let ident = req.query.identifier; 
   if (req.query.index == 1) {
-//Create card numbers
+      activePlayers[numPlayers] = false;
+      numPlayers++;
+
       ident = identifier++;
+
+//Create card numbers
       CreateCard();
       if (currentIndex == 0)
         res.json({val:req.query.index,identifier:ident,board:board1,playValid:true});    
@@ -440,18 +494,39 @@ router.get('/player2', function(req, res){
 
     if (ident != -1) {
       let name = req.query.name;
-      let tempBoard = req.query.board;
+
+
+//      let tempBoard = req.query.board;
+
+      let cardNum = Number(req.query.cardNum);
+
+//      if (cardNum > numPlayers) {
+//          res.json({val:req.query.index,checkWin:-1}); 
+//          return;
+//      }
+//      if (activePlayers[cardNum-1] == false) {
+//          res.json({val:req.query.index,checkWin:-1}); 
+//          return;      
+//      }
+
+      let i=(cardNum-1)*25;
+      for (let col=0;col<NUM_COLUMNS_CARD;col++) {
+          for (let row=0;row<NUM_ROWS_CARD;row++) {
+            board1[row][col] = cards[i++];
+          }
+      }
+
       let winner = false;
       if (gameType == 1)
-        winner = CheckWinRegular(tempBoard);
+        winner = CheckWinRegular(board1);
       else if (gameType == 2)
-        winner = CheckWin4Corners(tempBoard);
+        winner = CheckWin4Corners(board1);
       else if (gameType == 3)
-        winner = CheckWinOx(tempBoard);
+        winner = CheckWinOx(board1);
       else if (gameType == 4)
-        winner = CheckWin2021(tempBoard);
+        winner = CheckWin2021(board1);
       else if (gameType == 5)
-        winner = CheckWinChunHoon(tempBoard);
+        winner = CheckWinChunHoon(board1);
 
 // winnerReturn
 // -1 = no bingo
@@ -479,8 +554,16 @@ router.get('/player2', function(req, res){
 
     if (ident != -1) {
       if (resetState) {
+
+          numActivePlayers = 0;
+          activePlayers[ident-1] = true;
+          for (let i=0;i<numPlayers;i++) {
+            if (activePlayers[i])
+              numActivePlayers++;
+          }
+
 //polling to get reset cage.    
-          res.json({val:4,identifier:ident,ballNum:0,gameType:gameType});
+          res.json({val:4,identifier:ident,numActivePlayers:numActivePlayers,gameType:gameType});
           return;
       }      
 //polling to get mostRecentBall.    
@@ -522,6 +605,83 @@ router.get('/player2', function(req, res){
 
   }    
 
+});
+
+
+
+
+///////////////////
+
+router.get('/checkwin2', function(req, res){
+
+  let ident = req.query.identifier; 
+  if (req.query.index == 1) {
+        res.json({val:req.query.index,identifier:0});        
+  }
+  else if (req.query.index == 3) {
+
+    if (ident != -1) {
+      if (resetState) {
+
+          numActivePlayers = 0;
+          activePlayers[ident-1] = true;
+          for (let i=0;i<numPlayers;i++) {
+            if (activePlayers[i])
+              numActivePlayers++;
+          }
+
+//polling to get reset cage.    
+          res.json({val:4,identifier:ident,numActivePlayers:numActivePlayers,gameType:gameType});
+          return;
+      }      
+//polling to get mostRecentBall.    
+
+//      let ballNumB = GetCurrentBall();
+//      res.json({val:req.query.index,identifier:ident,ballNum:ballNumB,
+      res.json({val:req.query.index,identifier:ident,howMany:howManyA,numbers:numbers,
+      winnerName1:winnerName1,winnerName2:winnerName2,
+      winnerName3:winnerName3,winnerName4:winnerName4,
+      gameType:gameType});  
+      return;
+    }    
+  }  
+  else if (req.query.index == 9) {
+    let cardNum = Number(req.query.cardNum);
+
+    if (cardNum > numPlayers) {
+        res.json({val:req.query.index,checkWin:-1}); 
+        return;
+    }
+//    if (activePlayers[cardNum-1] == false) {
+//        res.json({val:req.query.index,checkWin:-1}); 
+//        return;      
+//    }
+
+    let i=(cardNum-1)*25;
+    for (let col=0;col<NUM_COLUMNS_CARD;col++) {
+        for (let row=0;row<NUM_ROWS_CARD;row++) {
+          board1[row][col] = cards[i++];
+        }
+    }
+
+    let winner = false;
+    if (gameType == 1)
+      winner = CheckWinRegular(board1);
+    else if (gameType == 2)
+      winner = CheckWin4Corners(board1);
+    else if (gameType == 3)
+      winner = CheckWinOx(board1);
+    else if (gameType == 4)
+      winner = CheckWin2021(board1);
+    else if (gameType == 5)
+      winner = CheckWinChunHoon(board1);
+    if (winner)
+      res.json({val:req.query.index,checkWin:1,board:board1});       
+    else
+      res.json({val:req.query.index,checkWin:0,board:board1});       
+
+  }
+  
 });
 
 
