@@ -102,7 +102,7 @@ function canvasApp(){
    //canvasApp level variables
     var keyPressList = [];
     var windowWidth = 692;
-    var windowHeight = 400;
+    var windowHeight = 550;
     var mouseX = 0;
     var mouseY = 0;
 
@@ -143,7 +143,7 @@ function canvasApp(){
         return;
 //These need to be modified when changes are made to location of canvas!!!!!!        
         xpixel = e.clientX - 8;
-        ypixel = e.clientY - 250;
+        ypixel = e.clientY - 90;
         Select(xpixel,ypixel);
     }
     function input()
@@ -180,9 +180,9 @@ function canvasApp(){
 
         if (winnerName1 == "" && winnerName2 == "" && winnerName3 == "" && winnerName4 == "") {
 // draw the image
-            let imgImage = document.getElementById("chunHoonOx");
+//            let imgImage = document.getElementById("chunHoonOx");
  // context.drawImage(imgImage, 350, 170);
-            context.drawImage(imgImage, getX(5*Math.floor(Math.floor(getWidth2()/2)/NUM_COLUMNS_CARD)), getY(Math.floor(getHeight2()/3+18)));
+//            context.drawImage(imgImage, getX(5*Math.floor(Math.floor(getWidth2()/2)/NUM_COLUMNS_CARD)), getY(Math.floor(getHeight2()/3+18)));
         }
 
 //horizontal lines
@@ -481,45 +481,45 @@ function canvasApp(){
           context.beginPath();
           context.fillStyle = "rgb(100,100,255)";
           context.strokeStyle = '#000000';
-          context.font = (ydelta-10) + 'px Arial';
+          context.font = (ydelta-20) + 'px Arial';
           context.textBaseline = 'bottom';
-          context.fillText  ("Regular Bingo",getX(xoffset),getY(yoffset-35));
+          context.fillText  ("Regular Bingo",getX(xoffset),getY(yoffset-40));
           context.closePath();               
         }
         else if (gameType == 2) {
           context.beginPath();
           context.fillStyle = "rgb(100,100,255)";
           context.strokeStyle = '#000000';
-          context.font = (ydelta-10) + 'px Arial';
+          context.font = (ydelta-20) + 'px Arial';
           context.textBaseline = 'bottom';
-          context.fillText  ("4 Corners Bingo",getX(xoffset),getY(yoffset-35));
+          context.fillText  ("4 Corners Bingo",getX(xoffset),getY(yoffset-40));
           context.closePath();               
         }
         else if (gameType == 3) {
           context.beginPath();
           context.fillStyle = "rgb(100,100,255)";
           context.strokeStyle = '#000000';
-          context.font = (ydelta-10) + 'px Arial';
+          context.font = (ydelta-20) + 'px Arial';
           context.textBaseline = 'bottom';
-          context.fillText  ("Ox Bingo",getX(xoffset) ,getY(yoffset-35));
+          context.fillText  ("Ox Bingo",getX(xoffset) ,getY(yoffset-40));
           context.closePath();               
         }
         else if (gameType == 4) {
           context.beginPath();
           context.fillStyle = "rgb(100,100,255)";
           context.strokeStyle = '#000000';
-          context.font = (ydelta-10) + 'px Arial';
+          context.font = (ydelta-20) + 'px Arial';
           context.textBaseline = 'bottom';
-          context.fillText  ("2021 Bingo",getX(xoffset) ,getY(yoffset-35));
+          context.fillText  ("2021 Bingo",getX(xoffset) ,getY(yoffset-40));
           context.closePath();               
         }
         else if (gameType == 5) {
           context.beginPath();
           context.fillStyle = "rgb(100,100,255)";
           context.strokeStyle = '#000000';
-          context.font = (ydelta-10) + 'px Arial';
+          context.font = (ydelta-20) + 'px Arial';
           context.textBaseline = 'bottom';
-          context.fillText  ("Chun Hoon Bingo",getX(xoffset) ,getY(yoffset-35));
+          context.fillText  ("Chun Hoon Bingo",getX(xoffset) ,getY(yoffset-40));
           context.closePath();               
         }
 
@@ -529,11 +529,11 @@ function canvasApp(){
           context.font = (18) + 'px Arial';
           context.textBaseline = 'bottom';
           if (numActivePlayers == 1)
-              context.fillText  ("" + numActivePlayers + " Player",getX(xoffset+3*xdelta+46) ,getY(yoffset-46));
+              context.fillText  ("" + numActivePlayers + " Player",getX(xoffset+3*xdelta+46) ,getY(yoffset-60));
           else
-              context.fillText  ("" + numActivePlayers + " Players",getX(xoffset+3*xdelta+46) ,getY(yoffset-46));            
+              context.fillText  ("" + numActivePlayers + " Players",getX(xoffset+3*xdelta+46) ,getY(yoffset-60));            
 
-context.fillText  ("CARD: " + identifier,getX(xoffset+3*xdelta+46) ,getY(yoffset-26));       
+context.fillText  ("CARD: " + identifier,getX(xoffset+3*xdelta+46) ,getY(yoffset-40));       
           context.closePath();  
 
 
@@ -543,7 +543,7 @@ context.fillText  ("CARD: " + identifier,getX(xoffset+3*xdelta+46) ,getY(yoffset
           context.beginPath();
           context.fillStyle = "rgb(0,0,0)";
           context.strokeStyle = '#000000';
-          context.font = (ydelta-10) + 'px Arial';
+          context.font = (ydelta-30) + 'px Arial';
           context.textBaseline = 'bottom'; 
           context.fillText  ("BINGO #" + winner,getX(xoffset)+xdelta*5+28 ,getY(yoffset-35));
           context.closePath();             
@@ -552,7 +552,7 @@ context.fillText  ("CARD: " + identifier,getX(xoffset+3*xdelta+46) ,getY(yoffset
           context.beginPath();
           context.fillStyle = "rgb(0,0,0)";
           context.strokeStyle = '#000000';
-          context.font = (ydelta-10) + 'px Arial';
+          context.font = (ydelta-30) + 'px Arial';
           context.textBaseline = 'bottom';
           context.fillText  ("NO BINGO",getX(xoffset)+xdelta*5+28 ,getY(yoffset-35));
           context.closePath();                 
@@ -561,7 +561,7 @@ context.fillText  ("CARD: " + identifier,getX(xoffset+3*xdelta+46) ,getY(yoffset
           context.beginPath();
           context.fillStyle = "rgb(0,0,0)";
           context.strokeStyle = '#000000';
-          context.font = (ydelta-10) + 'px Arial';
+          context.font = (ydelta-30) + 'px Arial';
           context.textBaseline = 'bottom';
           context.fillText  ("ONLY 1 TRY",getX(xoffset)+xdelta*5+28 ,getY(yoffset-35));
           context.closePath();                 
@@ -569,7 +569,7 @@ context.fillText  ("CARD: " + identifier,getX(xoffset+3*xdelta+46) ,getY(yoffset
           context.beginPath();
           context.fillStyle = "rgb(0,0,0)";
           context.strokeStyle = '#000000';
-          context.font = (ydelta-10) + 'px Arial';
+          context.font = (ydelta-30) + 'px Arial';
           context.textBaseline = 'bottom';
           context.fillText  ("GAME IN PROGRESS",getX(xoffset)+xdelta*5+28 ,getY(yoffset-35));
           context.closePath();                 
@@ -577,7 +577,7 @@ context.fillText  ("CARD: " + identifier,getX(xoffset+3*xdelta+46) ,getY(yoffset
           context.beginPath();
           context.fillStyle = "rgb(0,0,0)";
           context.strokeStyle = '#000000';
-          context.font = (ydelta-10) + 'px Arial';
+          context.font = (ydelta-30) + 'px Arial';
           context.textBaseline = 'bottom';
           context.fillText  ("NEED A NAME",getX(xoffset)+xdelta*5+28 ,getY(yoffset-35));
           context.closePath();                 
@@ -634,7 +634,7 @@ context.fillText  ("CARD: " + identifier,getX(xoffset+3*xdelta+46) ,getY(yoffset
 
 
             let imgImage2 = document.getElementById("chunHoonLogo");
-            context.drawImage(imgImage2, getX(139), getY(281));
+            context.drawImage(imgImage2, getX(139), getY(393));
 
             if (winnerName1 != "") {
                 let imgImage13 = document.getElementById("ox1");
@@ -643,16 +643,17 @@ context.fillText  ("CARD: " + identifier,getX(xoffset+3*xdelta+46) ,getY(yoffset
                 let imgImage43 = document.getElementById("ox4");
                 let imgImage53 = document.getElementById("ox5");
                 if (imageNum == 1 || imageNum == 2)
-                    context.drawImage(imgImage13, getX(591), getY(170+imageYLoc));
+                    context.drawImage(imgImage13, getX(591), getY(300+imageYLoc));
                 else if (imageNum == 3 || imageNum == 4)
-                    context.drawImage(imgImage23, getX(596), getY(178+imageYLoc));
+                    context.drawImage(imgImage23, getX(596), getY(308+imageYLoc));
                 else if (imageNum == 5 || imageNum == 6)
-                    context.drawImage(imgImage33, getX(600), getY(180+imageYLoc));
+                    context.drawImage(imgImage33, getX(600), getY(310+imageYLoc));
                 else if (imageNum == 7 || imageNum == 8)
-                    context.drawImage(imgImage43, getX(605), getY(180+imageYLoc));
+                    context.drawImage(imgImage43, getX(605), getY(310+imageYLoc));
                 else if (imageNum == 9 || imageNum == 10)
-                    context.drawImage(imgImage53, getX(606), getY(178+imageYLoc));
+                    context.drawImage(imgImage53, getX(606), getY(308+imageYLoc));
             }
+            
 /////////////
         context.restore(); 
     }
@@ -744,19 +745,13 @@ context.fillText  ("CARD: " + identifier,getX(xoffset+3*xdelta+46) ,getY(yoffset
         <img id="ox4" width="0" height="0" src="ox4.png">
         <img id="ox5" width="0" height="0" src="ox5.png">
         
-        <label for="username" style="font-size: 16pt">Name:</label>
-        <input id="username" type="text" name="username" value="" maxlength="10" style="font-size: 14pt">
-        <input type="button" value="Bingo" onclick="msgBingo()">
-        <br>
-        <br>
-        <label for="message" style="font-size: 16pt">Message:</label>
-        <input id="message" type="text" name="message" value="" size="30" maxlength="40" style="font-size: 14pt">        
-        <br>
-        <textarea id="comments" name="comments" rows="6" cols="77" style="font-size: 12pt"></textarea>
+        <label for="username" style="font-size: 26pt">Name:</label>
+        <input id="username" type="text" name="username" value="" maxlength="10" style="font-size: 20pt">
+        <input type="button" style="width:60px;height:42px;" value="Bingo" onclick="msgBingo()">
 
 
 
-<canvas id="canvas" width="692" height="400"  style="position:absolute;top: 250px; left: 8px;">
+<canvas id="canvas" width="692" height="550"  style="position:absolute;top: 90px; left: 8px;">
  Your browser does not support HTML5 Canvas.
 </canvas>
 
@@ -806,8 +801,8 @@ function successInfo(data) {
   }
   else if (data.val == 30) {
 //polling to get the total message.
-      $("#comments").val("");
-      $("#comments").val(data.message);          
+//      $("#comments").val("");
+//      $("#comments").val(data.message);          
   }        
   else if (data.val == 3) {
 //polling to get the winner name.
@@ -875,11 +870,11 @@ $(document).ready(function(){
     $("#message").keydown( function( event ) {
         if ( event.which === 13 ) {
 
-            if ($("#message").val() != "") {
-                let messSent = $("#username").val() + ": " + $("#message").val();
-                $("#message").val("");
-                $.get("/player2",{index:5,message:messSent},successInfo);
-            }
+//            if ($("#message").val() != "") {
+//                let messSent = $("#username").val() + ": " + $("#message").val();
+//                $("#message").val("");
+//                $.get("/player2",{index:5,message:messSent},successInfo);
+//            }
 
             // Disable sending the related form
             event.preventDefault();
