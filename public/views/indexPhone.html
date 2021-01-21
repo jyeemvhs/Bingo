@@ -101,8 +101,8 @@ function canvasApp(){
 
    //canvasApp level variables
     var keyPressList = [];
-    var windowWidth = 692;
-    var windowHeight = 550;
+    var windowWidth = 758;
+    var windowHeight = 1000;
     var mouseX = 0;
     var mouseY = 0;
 
@@ -141,7 +141,10 @@ function canvasApp(){
     {
       if (winner == -3)
         return;
-//These need to be modified when changes are made to location of canvas!!!!!!        
+//These need to be modified when changes are made to location of canvas!!!!!!       
+console.log(e.offsetX + " " + e.offsetY);
+console.log(e.clientX + " " + e.clientY);
+
 //        xpixel = e.clientX - 8;
         xpixel = e.offsetX;
 //        ypixel = e.clientY - 90;
@@ -182,16 +185,16 @@ function canvasApp(){
 
         if (winnerName1 == "" && winnerName2 == "" && winnerName3 == "" && winnerName4 == "") {
 // draw the image
-            let imgImage = document.getElementById("chunHoonOx");
-//  context.drawImage(imgImage, 350, 170);
-            context.drawImage(imgImage, getX(5*Math.floor(Math.floor(getWidth2()/2)/NUM_COLUMNS_CARD))-5, getY(Math.floor(getHeight2()/3+75)));
+//            let imgImage = document.getElementById("chunHoonOx");
+ // context.drawImage(imgImage, 350, 170);
+//            context.drawImage(imgImage, getX(5*Math.floor(Math.floor(getWidth2()/2)/NUM_COLUMNS_CARD)), getY(Math.floor(getHeight2()/3+18)));
         }
 
 //horizontal lines
         context.save(); //save current state in stack
         context.setTransform(1,0,0,1,0,0);
 
-        let height = Math.floor(getHeight2()/3);
+        let height = Math.floor(getHeight2()/5);
         let width = Math.floor(getWidth2()*14/15);
         let xoffset = Math.floor(getWidth2()/15);
         let yoffset = 0;
@@ -274,7 +277,7 @@ function canvasApp(){
           context.beginPath();
           context.fillStyle = "rgb(0,0,0)";
           context.strokeStyle = '#000000';
-          context.font = (ydelta-3) + 'px Arial';
+          context.font = (ydelta-13) + 'px Arial';
           context.textBaseline = 'bottom';
           context.fillText  ("" + count,getX(xoffset)+colLoc ,getY(yoffset)+rowLoc);
           context.closePath();
@@ -288,7 +291,7 @@ function canvasApp(){
 /////////////////        
 //Draw Card        
         height = Math.floor(getHeight2()/2);
-        width = Math.floor(getWidth2()/2);
+        width = Math.floor(getWidth2()*8/8);
         
         ydelta = Math.floor(height/NUM_ROWS_CARD);
         xdelta = Math.floor(width/NUM_COLUMNS_CARD);
@@ -479,145 +482,105 @@ function canvasApp(){
             colLoc += xdelta;
         }        
         
+        context.beginPath();
+        context.fillStyle = "rgb(100,100,255)";
+        context.strokeStyle = '#000000';
+        context.font = (ydelta-60) + 'px Arial';
+        context.textBaseline = 'bottom';
         if (gameType == 1) {
-          context.beginPath();
-          context.fillStyle = "rgb(100,100,255)";
-          context.strokeStyle = '#000000';
-          context.font = (ydelta-20) + 'px Arial';
-          context.textBaseline = 'bottom';
-          context.fillText  ("Regular Bingo",getX(xoffset),getY(yoffset-40));
+          context.fillText  ("Regular Bingo",getX(xoffset),getY(yoffset-ydelta));
           context.closePath();               
         }
         else if (gameType == 2) {
-          context.beginPath();
-          context.fillStyle = "rgb(100,100,255)";
-          context.strokeStyle = '#000000';
-          context.font = (ydelta-20) + 'px Arial';
-          context.textBaseline = 'bottom';
-          context.fillText  ("4 Corners Bingo",getX(xoffset),getY(yoffset-40));
+          context.fillText  ("4 Corners Bingo",getX(xoffset),getY(yoffset-ydelta));
           context.closePath();               
         }
         else if (gameType == 3) {
-          context.beginPath();
-          context.fillStyle = "rgb(100,100,255)";
-          context.strokeStyle = '#000000';
-          context.font = (ydelta-20) + 'px Arial';
-          context.textBaseline = 'bottom';
-          context.fillText  ("Ox Bingo",getX(xoffset) ,getY(yoffset-40));
+          context.fillText  ("Ox Bingo",getX(xoffset) ,getY(yoffset-ydelta));
           context.closePath();               
         }
         else if (gameType == 4) {
-          context.beginPath();
-          context.fillStyle = "rgb(100,100,255)";
-          context.strokeStyle = '#000000';
-          context.font = (ydelta-20) + 'px Arial';
-          context.textBaseline = 'bottom';
-          context.fillText  ("2021 Bingo",getX(xoffset) ,getY(yoffset-40));
+          context.fillText  ("2021 Bingo",getX(xoffset) ,getY(yoffset-ydelta));
           context.closePath();               
         }
         else if (gameType == 5) {
-          context.beginPath();
-          context.fillStyle = "rgb(100,100,255)";
-          context.strokeStyle = '#000000';
-          context.font = (ydelta-20) + 'px Arial';
-          context.textBaseline = 'bottom';
-          context.fillText  ("Chun Hoon Bingo",getX(xoffset) ,getY(yoffset-40));
+          context.fillText  ("Chun Hoon Bingo",getX(xoffset) ,getY(yoffset-ydelta));
           context.closePath();               
         }
 
           context.beginPath();
           context.fillStyle = "rgb(0,0,0)";
           context.strokeStyle = '#000000';
-          context.font = (18) + 'px Arial';
+          context.font = (ydelta-60) + 'px Arial';
           context.textBaseline = 'bottom';
           if (numActivePlayers == 1)
-              context.fillText  ("" + numActivePlayers + " Player",getX(xoffset+3*xdelta+46) ,getY(yoffset-60));
+              context.fillText  ("" + numActivePlayers + " Player",getX(xoffset) ,getY(yoffset-150));
           else
-              context.fillText  ("" + numActivePlayers + " Players",getX(xoffset+3*xdelta+46) ,getY(yoffset-60));            
+              context.fillText  ("" + numActivePlayers + " Players",getX(xoffset) ,getY(yoffset-150));            
 
-context.fillText  ("CARD: " + identifier,getX(xoffset+3*xdelta+46) ,getY(yoffset-40));       
+context.fillText  ("CARD: " + identifier,getX(xoffset) ,getY(yoffset-200));       
           context.closePath();  
-
 
 
         context.beginPath();
         context.fillStyle = "rgb(0,0,0)";
         context.strokeStyle = '#000000';
-        context.font = (ydelta-30) + 'px Arial';
-        context.textBaseline = 'bottom';
+        context.font = (ydelta-60) + 'px Arial';
+        context.textBaseline = 'bottom'; 
         if (winner == 1) {               
-          context.fillText  ("1st Place",getX(xoffset)+xdelta*5+28 ,getY(yoffset-35));
+          context.fillText  ("1st Place",getX(xoffset),getY(yoffset)-250);
           context.closePath();             
         } 
         else if (winner == 2) {               
-          context.fillText  ("2nd Place",getX(xoffset)+xdelta*5+28 ,getY(yoffset-35));
+          context.fillText  ("2nd Place",getX(xoffset),getY(yoffset)-250);
           context.closePath();             
-        }
+        }         
         else if (winner == 3) {               
-          context.fillText  ("3rd Place",getX(xoffset)+xdelta*5+28 ,getY(yoffset-35));
+          context.fillText  ("3rd Place",getX(xoffset),getY(yoffset)-250);
           context.closePath();             
-        }                  
+        }         
         else if (winner > 3) {               
-          context.fillText  (winner + "th Place",getX(xoffset)+xdelta*5+28 ,getY(yoffset-35));
+          context.fillText  (winner + "th Place",getX(xoffset),getY(yoffset)-250);
           context.closePath();             
-        }                  
+        }         
         else if (winner == -1) {
-          context.fillText  ("NO BINGO",getX(xoffset)+xdelta*5+28 ,getY(yoffset-35));
+          context.fillText  ("NO BINGO",getX(xoffset),getY(yoffset)-250);
           context.closePath();                 
         }
         else if (winner == -2) {
-          context.fillText  ("ONLY 1 TRY",getX(xoffset)+xdelta*5+28 ,getY(yoffset-35));
+          context.fillText  ("ONLY 1 TRY",getX(xoffset),getY(yoffset)-250);
           context.closePath();                 
         } else if (winner == -3) {
-          context.fillText  ("WAIT FOR NEXT GAME",getX(xoffset)+xdelta*5+28 ,getY(yoffset-35));
+          context.fillText  ("WAIT FOR NEXT GAME",getX(xoffset),getY(yoffset)-250);
           context.closePath();                 
         }  else if (winner == -4) {
-          context.fillText  ("NEED A NAME",getX(xoffset)+xdelta*5+28 ,getY(yoffset-35));
+          context.fillText  ("NEED A NAME",getX(xoffset),getY(yoffset)-250);
           context.closePath();                 
         }
 
 
+        context.beginPath();
+        context.fillStyle = "rgb(0,0,0)";
+        context.strokeStyle = '#000000';
+        context.font = (ydelta-50) + 'px Arial';
+        context.textBaseline = 'bottom';
        if (winnerName1 != "") {
-          context.beginPath();
-          context.fillStyle = "rgb(0,0,0)";
-          context.strokeStyle = '#000000';
-          context.font = (ydelta-3) + 'px Arial';
-          context.textBaseline = 'bottom';
-          
-        context.fillText  ("1. " + winnerName1,getX(xoffset)+xdelta*5+8 ,getY(yoffset)+ydelta);
+        context.fillText  ("1. " + winnerName1,getX(xoffset)+3*xdelta ,getY(yoffset)-250);
           context.closePath();                 
                     
        }       
        if (winnerName2 != "") {
-          context.beginPath();
-          context.fillStyle = "rgb(0,0,0)";
-          context.strokeStyle = '#000000';
-          context.font = (ydelta-3) + 'px Arial';
-          context.textBaseline = 'bottom';
-          
-        context.fillText  ("2. " + winnerName2,getX(xoffset)+xdelta*5+8 ,getY(yoffset)+2*ydelta);
+        context.fillText  ("2. " + winnerName2,getX(xoffset)+3*xdelta ,getY(yoffset)-200);
           context.closePath();                 
                     
        }  
        if (winnerName3 != "") {
-          context.beginPath();
-          context.fillStyle = "rgb(0,0,0)";
-          context.strokeStyle = '#000000';
-          context.font = (ydelta-3) + 'px Arial';
-          context.textBaseline = 'bottom';
-          
-        context.fillText  ("3. " + winnerName3,getX(xoffset)+xdelta*5+8 ,getY(yoffset)+3*ydelta);
+        context.fillText  ("3. " + winnerName3,getX(xoffset)+3*xdelta ,getY(yoffset)-150);
           context.closePath();                 
                     
        }     
        if (winnerName4 != "") {
-          context.beginPath();
-          context.fillStyle = "rgb(0,0,0)";
-          context.strokeStyle = '#000000';
-          context.font = (ydelta-3) + 'px Arial';
-          context.textBaseline = 'bottom';
-          
-        context.fillText  ("4. " + winnerName4,getX(xoffset)+xdelta*5+8 ,getY(yoffset)+4*ydelta);
+        context.fillText  ("4. " + winnerName4,getX(xoffset)+3*xdelta ,getY(yoffset)-100);
           context.closePath();                 
                     
        }        
@@ -626,8 +589,9 @@ context.fillText  ("CARD: " + identifier,getX(xoffset+3*xdelta+46) ,getY(yoffset
 // draw the image
 
 
-            let imgImage2 = document.getElementById("chunHoonLogo");
-            context.drawImage(imgImage2, getX(139), getY(393));
+            let imgImage2 = document.getElementById("chunHoonLogoPhone");
+ //           context.drawImage(imgImage2, getX(139), getY(393));
+            context.drawImage(imgImage2, getX(310), getY(708));
 
             if (winnerName1 != "") {
                 let imgImage13 = document.getElementById("ox1");
@@ -636,15 +600,15 @@ context.fillText  ("CARD: " + identifier,getX(xoffset+3*xdelta+46) ,getY(yoffset
                 let imgImage43 = document.getElementById("ox4");
                 let imgImage53 = document.getElementById("ox5");
                 if (imageNum == 1 || imageNum == 2)
-                    context.drawImage(imgImage13, getX(591), getY(300+imageYLoc));
+                    context.drawImage(imgImage13, getX(591-250), getY(300+imageYLoc));
                 else if (imageNum == 3 || imageNum == 4)
-                    context.drawImage(imgImage23, getX(596), getY(308+imageYLoc));
+                    context.drawImage(imgImage23, getX(596-250), getY(308+imageYLoc));
                 else if (imageNum == 5 || imageNum == 6)
-                    context.drawImage(imgImage33, getX(600), getY(310+imageYLoc));
+                    context.drawImage(imgImage33, getX(600-250), getY(310+imageYLoc));
                 else if (imageNum == 7 || imageNum == 8)
-                    context.drawImage(imgImage43, getX(605), getY(310+imageYLoc));
+                    context.drawImage(imgImage43, getX(605-250), getY(310+imageYLoc));
                 else if (imageNum == 9 || imageNum == 10)
-                    context.drawImage(imgImage53, getX(606), getY(308+imageYLoc));
+                    context.drawImage(imgImage53, getX(606-250), getY(308+imageYLoc));
             }
             
 /////////////
@@ -677,7 +641,7 @@ context.fillText  ("CARD: " + identifier,getX(xoffset+3*xdelta+46) ,getY(yoffset
         _xpixel -= xoffset;
 
         let height = Math.floor(getHeight2()/2);
-        let width = Math.floor(getWidth2()/2);
+        let width = Math.floor(getWidth2()*8/8);
         
         if (_xpixel < 0 || _xpixel > width)
             return;
@@ -732,6 +696,7 @@ context.fillText  ("CARD: " + identifier,getX(xoffset+3*xdelta+46) ,getY(yoffset
   <body> 
         <img id="chunHoonOx" width="0" height="0" src="chunHoonOx.jpg">
         <img id="chunHoonLogo" width="0" height="0" src="CHLogoTransp.png">
+        <img id="chunHoonLogoPhone" width="0" height="0" src="CHLogoTranspPhone.png">
         <img id="ox1" width="0" height="0" src="ox1.png">
         <img id="ox2" width="0" height="0" src="ox2.png">
         <img id="ox3" width="0" height="0" src="ox3.png">
@@ -744,7 +709,7 @@ context.fillText  ("CARD: " + identifier,getX(xoffset+3*xdelta+46) ,getY(yoffset
 
 
 
-<canvas id="canvas" width="692" height="550"  style="position:absolute;top: 90px; left: 8px;">
+<canvas id="canvas" width="758" height="1000"  style="position:absolute;top: 90px; left: 8px;">
  Your browser does not support HTML5 Canvas.
 </canvas>
 
@@ -765,8 +730,8 @@ function msgBingo() {
 
 
 function successInfo(data) { 
-    if (!data)
-        return;    //error
+	if (!data)
+		return;    //error
 
   if (data.val == 1) {
       if (!data.playValid) {
@@ -860,8 +825,8 @@ $(document).ready(function(){
 
     $.get("/player2",{index:1,identifier:identifier},successInfo);
 
-    $("#message").keydown( function( event ) {
-        if ( event.which === 13 ) {
+  	$("#message").keydown( function( event ) {
+  		if ( event.which === 13 ) {
 
 //            if ($("#message").val() != "") {
 //                let messSent = $("#username").val() + ": " + $("#message").val();
@@ -869,11 +834,11 @@ $(document).ready(function(){
 //                $.get("/player2",{index:5,message:messSent},successInfo);
 //            }
 
-            // Disable sending the related form
-            event.preventDefault();
-            return false;
-        }
-    });
+  			// Disable sending the related form
+  			event.preventDefault();
+  			return false;
+  		}
+  	});
 
 
 });  

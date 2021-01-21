@@ -103,6 +103,9 @@ let infoVal = 0;
 router.get("/",function(request,response){
   response.sendFile(__dirname + "/public/views/index.html");
 });
+router.get("/phone",function(request,response){
+  response.sendFile(__dirname + "/public/views/indexPhone.html");
+});
 router.get("/info",function(request,response){
   infoVal++;
   response.sendFile(__dirname + "/public/views/info.html");
