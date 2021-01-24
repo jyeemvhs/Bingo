@@ -28,7 +28,10 @@ var router = express.Router();
       let winnerName3 = "";
       let winnerName4 = "";
 
+      let fourCornersCount = 0;
       let gameType = 1;
+
+
 
       let howManyA = 1;
       let numbers=[];
@@ -69,6 +72,7 @@ function reset() {
       winnerName3 = "";
       winnerName4 = "";
 
+      fourCornersCount = 0;
       for (let i=0;i<numPlayers;i++)
         activePlayers[i] = false;
 
@@ -143,13 +147,37 @@ router.get("/paper",function(request,response){
    //     return (cage[currentIndex-1]);
    //   }
 
-      let j = currentIndex;
-      for (let i=0;i<howManyA;i++) {
-        cageReverse[cage[j++]-1] = 1;
-        numbers[i] = cage[currentIndex++];
+      if (gameType == 2)
+      {
+//game type is 4 corners which means only locations of B and O matter.
+          if (fourCornersCount < 30)
+          {
+              let j = currentIndex;
+              let i = 0;
+
+              let keepLooping = true;
+              while (keepLooping)
+              {
+                  cageReverse[cage[j]-1] = 1;
+                  j++;
+                  numbers[i] = cage[currentIndex];
+                  currentIndex++;
+                  if (numbers[i] < 16 || numbers[i] > 60)
+                    keepLooping = false;
+              }
+          }
+          fourCornersCount++;
       }
+      else
+      {
+          let j = currentIndex;
+          for (let i=0;i<howManyA;i++) {
+            cageReverse[cage[j++]-1] = 1;
+            numbers[i] = cage[currentIndex++];
+          }
 //      cageReverse[cage[currentIndex]-1] = 1;
 //      return (cage[currentIndex++]);
+      }
     }
 
 router.get('/info2', function(req, res){
@@ -162,7 +190,11 @@ router.get('/info2', function(req, res){
   }
   else if (req.query.index == 3) {
 //        console.log(req.query.howMany);
-        howManyA = Number(req.query.howMany);
+        if (gameType == 2)
+            howManyA = 1;
+        else
+            howManyA = Number(req.query.howMany);
+
   //        let ballNumA = -1;
   //        ballNumA = ChooseBall(); 
         ChooseBall(); 
