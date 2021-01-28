@@ -525,7 +525,29 @@ router.get('/player2', function(req, res){
       res.json({val:req.query.index,identifier:ident,winner:-4});   
       return;      
     }
+    if (req.query.name.length > 10)
+    {
+      res.json({val:req.query.index,identifier:ident,winner:-4});   
+      return; 
+    }
 
+    let bad = false;
+    for (let i=0;i<req.query.name.length;i++) {
+      let j = req.query.name[i];
+      if (j < 'a' || j > 'z') {
+        if (j < 'A' || j > 'Z') {
+          if (j != ' ') {
+            bad = true;
+          }
+        }
+      }
+    }
+
+    if (bad)
+    {
+      res.json({val:req.query.index,identifier:ident,winner:-4});   
+      return; 
+    }
 
     if (ident != -1) {
       let name = req.query.name;
