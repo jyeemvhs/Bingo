@@ -2,6 +2,8 @@
 var express = require("express");
 var router = express.Router();
 
+
+    let code = "";
     let NUM_ROWS_CAGE = 5;
     let NUM_COLUMNS_CAGE = 15;
     let NUM_VALUES_PER_ROW = NUM_COLUMNS_CAGE;
@@ -184,6 +186,7 @@ router.get('/info2', function(req, res){
 
   if (req.query.index == 2) {
     reset();
+    code = req.query.code;
     gameType = req.query.gameType;
     res.json({val:req.query.index});
     return;
@@ -520,7 +523,11 @@ router.get('/player2', function(req, res){
         res.json({val:req.query.index,identifier:ident,board:board1,playValid:false});    
   }
   else if (req.query.index == 2) {
-//Check win    
+//Check win   
+    if (req.query.code != code) {
+      res.json({val:req.query.index,identifier:ident,winner:-5});   
+      return;      
+    } 
     if (req.query.name == "") {
       res.json({val:req.query.index,identifier:ident,winner:-4});   
       return;      

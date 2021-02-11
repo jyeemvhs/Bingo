@@ -27,7 +27,7 @@ let globalVal =-1;
     let winnerName2 = "";
     let winnerName3 = "";
     let winnerName4 = "";
-    let totalMessage = "";
+//    let totalMessage = "";
 
     for (let i=0;i<numBalls;i++) {
         cageReverse[i] = 0;
@@ -62,8 +62,8 @@ function successInfo2(data) {
 
             numActivePlayers = data.numActivePlayers;
 
-            $("#comments").val("");
-            $("#comments").val(data.message);
+//            $("#comments").val("");
+//            $("#comments").val(data.message);
         }
     }
 }
@@ -369,13 +369,9 @@ function canvasApp(){
   
   <body>  
         <h1>GAME CALLER</h1>
+        <label for="code" style="font-size: 16pt">Code:</label>
+        <input id="code" type="text" name="code" value="" size="8" maxlength="7" style="font-size: 14pt">
 
-        <label for="message" style="font-size: 16pt">Message:</label>
-        <input id="message" type="text" name="message" value="" size="30" maxlength="50" style="font-size: 14pt">        
-        <input type="button" value="Clear" onclick="msgClear()">
-        <br>
-        <textarea id="comments" name="comments" rows="6" cols="77" style="font-size: 12pt"></textarea>
-        <br>        
         <br>        
         <input type="button" value="Reset" onclick="msgReset()">
 
@@ -404,15 +400,15 @@ function canvasApp(){
 
 function msgReset() {
     if ($("#gameType").val() == "Regular")        
-        $.get("/info2",{index:2,gameType:1},successInfo);
+        $.get("/info2",{index:2,gameType:1,code:$("#code").val()},successInfo);
     else if ($("#gameType").val() == "4 Corners")        
-        $.get("/info2",{index:2,gameType:2},successInfo);
+        $.get("/info2",{index:2,gameType:2,code:$("#code").val()},successInfo);
     else if ($("#gameType").val() == "Ox")        
-        $.get("/info2",{index:2,gameType:3},successInfo);
+        $.get("/info2",{index:2,gameType:3,code:$("#code").val()},successInfo);
     else if ($("#gameType").val() == "2021")        
-        $.get("/info2",{index:2,gameType:4},successInfo);
+        $.get("/info2",{index:2,gameType:4,code:$("#code").val()},successInfo);
     else if ($("#gameType").val() == "ChunHoon")        
-        $.get("/info2",{index:2,gameType:5},successInfo);
+        $.get("/info2",{index:2,gameType:5,code:$("#code").val()},successInfo);
 }
 function msgGameType() {
         $.get("/info2",{index:8},successInfo);
@@ -464,19 +460,22 @@ function successInfo(data) {
 }
 
 
-$(document).ready(function(){   
-    $("#message").keydown( function( event ) {
-        if ( event.which === 13 ) {
-            if ($("#message").val() != "") {
-                let messSent = "Bingo Caller: " + $("#message").val();
-                $("#message").val("");
-                $.get("/player2",{index:5,message:messSent},successInfo);
-            }
-            // Disable sending the related form
-            event.preventDefault();
-            return false;
-        }
-    });
+$(document).ready(function(){  
+
+
+//    $("#code").keydown( function( event ) {
+//        if ( event.which === 13 ) {
+//            if ($("#code").val() != "") {
+//                let codeSent = $("#code").val();
+//                $.get("/player2",{index:15,code:codeSent},successInfo);
+//            }
+//            // Disable sending the related form
+//            event.preventDefault();
+//            return false;
+//        }
+//    });
+
+
 });  
     
 

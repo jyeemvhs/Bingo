@@ -556,6 +556,9 @@ context.fillText  ("CARD: " + identifier,getX(xoffset) ,getY(yoffset-200));
         }  else if (winner == -4) {
           context.fillText  ("NEED A NAME",getX(xoffset),getY(yoffset)-250);
           context.closePath();                 
+        }  else if (winner == -5) {
+          context.fillText  ("BAD CODE",getX(xoffset),getY(yoffset)-250);
+          context.closePath();                 
         }
 
 
@@ -703,8 +706,12 @@ context.fillText  ("CARD: " + identifier,getX(xoffset) ,getY(yoffset-200));
         <img id="ox4" width="0" height="0" src="ox4.png">
         <img id="ox5" width="0" height="0" src="ox5.png">
         
+        <label for="code" style="font-size: 16pt">Code:</label>
+        <input id="code" type="text" name="code" value="" size="8" maxlength="7" style="font-size: 14pt">
+
+
         <label for="username" style="font-size: 26pt">Name:</label>
-        <input id="username" type="text" name="username" value="" maxlength="10" style="font-size: 20pt">
+        <input id="username" type="text" name="username" value="" size="11" maxlength="10" style="font-size: 20pt">
         <input type="button" style="width:60px;height:42px;" value="Bingo" onclick="msgBingo()">
 
 
@@ -725,13 +732,13 @@ function msgBingo() {
       return;
 
 //   $.get("/player2",{index:2,identifier:identifier,board:board,name:$("#username").val()},successInfo);
-  $.get("/player2",{index:2,identifier:identifier,cardNum:identifier,name:$("#username").val()},successInfo);   
+  $.get("/player2",{index:2,identifier:identifier,cardNum:identifier,name:$("#username").val(),code:$("#code").val()},successInfo);   
 }
 
 
 function successInfo(data) { 
-	if (!data)
-		return;    //error
+    if (!data)
+        return;    //error
 
   if (data.val == 1) {
       if (!data.playValid) {
@@ -825,8 +832,8 @@ $(document).ready(function(){
 
     $.get("/player2",{index:1,identifier:identifier},successInfo);
 
-  	$("#message").keydown( function( event ) {
-  		if ( event.which === 13 ) {
+    $("#message").keydown( function( event ) {
+        if ( event.which === 13 ) {
 
 //            if ($("#message").val() != "") {
 //                let messSent = $("#username").val() + ": " + $("#message").val();
@@ -834,11 +841,11 @@ $(document).ready(function(){
 //                $.get("/player2",{index:5,message:messSent},successInfo);
 //            }
 
-  			// Disable sending the related form
-  			event.preventDefault();
-  			return false;
-  		}
-  	});
+            // Disable sending the related form
+            event.preventDefault();
+            return false;
+        }
+    });
 
 
 });  
